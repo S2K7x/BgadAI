@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f6f3ee;
+  --card: #ffffff;
+  --ink: #1f1c19;
+  --muted: #776f66;
+  --line: #e7e1d8;
+  --soft: #efe9e1;
+  --accent: #2f5d4a;
+  --accent-ink: #ffffff;
+  --good: #2f7d4f;
+  --bad: #b4443a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141312;
+    --card: #1d1b19;
+    --ink: #f1ece6;
+    --muted: #a59d93;
+    --line: #2f2b27;
+    --soft: #26231f;
+    --accent: #7cc3a1;
+    --accent-ink: #10201a;
+    --good: #6fcf97;
+    --bad: #ef8a80;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-soft: var(--soft);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-good: var(--good);
+  --color-bad: var(--bad);
+  --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-fraunces);
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+/* Subtle checkerboard so transparent cut-outs read as cut-outs. */
+.cutout-bg {
+  background-color: var(--soft);
+  background-image: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--card) 70%, transparent), transparent 70%);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.pop-in {
+  animation: pop-in 0.25s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pop-in {
+    animation: none;
+  }
+}

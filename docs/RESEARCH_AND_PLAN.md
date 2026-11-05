@@ -269,3 +269,49 @@ APIs & infrastructure
 - [Best virtual try-on APIs 2026 (fal)](https://fal.ai/learn/tools/best-virtual-try-on-apis-2026) · [Virtual try-on APIs for developers 2026](https://innvesti-landing.pages.dev/reports/best-virtual-try-on-apis-developers-2026/)
 - [Supabase vector search with Next.js](https://supabase.com/docs/guides/ai/examples/nextjs-vector-search)
 - [PWA vs Native vs React Native 2026](https://www.buildmvpfast.com/blog/pwa-vs-native-vs-react-native-solo-founder-decision-2026) · [React Native vs Expo 2026](https://www.markaicode.com/vs/react-native-vs-expo/)
+
+---
+
+## 10. Implementation status (v0.1 — built)
+
+The first version is **local-first** rather than Supabase-backed: no account, zero setup, and
+photos stay on the device. The data model in §4.2 maps 1:1 onto the IndexedDB tables
+(`src/lib/db.ts`), so syncing to Supabase/Postgres later is an additive change.
+
+| Plan item | Status |
+|---|---|
+| Style onboarding (quiz + Style Shuffle swipe + archetype card) | ✅ `src/app/onboarding` |
+| Multi-photo capture, resize/EXIF strip, background queue | ✅ `src/app/closet/add`, `src/lib/image.ts` |
+| AI tagging into a fixed taxonomy (structured outputs) | ✅ `POST /api/ai/analyze` |
+| Flat-lay mode (one photo → several items, cropped by box) | ✅ |
+| On-device colour extraction (k-means → palette names) | ✅ works without AI |
+| Background removal | ⚠️ Experimental on-device (see learnings) |
+| Closet grid, filters (category / colour / search), laundry status, item details, price | ✅ |
+| Hybrid outfit engine (constraints → scoring → MMR diversity → explanations) | ✅ `src/lib/outfitEngine.ts` + tests |
+| Weather (Open-Meteo), occasions, swap a piece, 👍/👎 learning, "style this item" | ✅ |
+| LLM re-rank + explanations of top candidates | ✅ `POST /api/ai/stylist` (on demand) |
+| Manual builder with live score + "complete it for me" | ✅ `src/app/create` |
+| Inspiration → garment breakdown → closet matching → shop the gap | ✅ `src/app/inspo`, `POST /api/ai/inspo`, `GET /api/shop` |
+| Wear log, cost-per-wear, never-worn, colour palette insights | ✅ `src/app/me` |
+| Backup export/import | ✅ |
+| PWA manifest + icons | ✅ (offline service worker: not yet) |
+
+### Learnings from building & testing
+- **BiRefNet lite in the browser is fragile.** The ONNX export only ships `fp32`/`fp16` weights
+  (no quantised variants); `fp16` needs the WebGPU `shader-f16` feature; the WebGPU kernels
+  need >10 storage buffers per shader stage (fails on SwiftShader and likely on low-end phones);
+  and the WASM fallback runs out of memory at 1024×1024. The app therefore verifies the model
+  with a test cut-out before enabling it. **Next step:** a server-side cut-out worker
+  (rembg/BiRefNet, MIT) or a hosted API, used when on-device fails.
+- **Next.js 16 keeps previously visited routes mounted** (hidden) for instant back-navigation —
+  helpful for UX, but remember it when writing tests or global listeners.
+- The SDK auto-adds the structured-outputs beta when `output_config.format` is used; refusals are
+  routed server-side to a fallback model with `fallbacks: "default"`.
+
+### Next up (from the roadmap)
+1. Server-side background removal fallback.
+2. Optional accounts + Supabase sync (multi-device), with RLS.
+3. FashionCLIP embeddings (pgvector) for visual similarity in inspo matching and swap ranking.
+4. Affiliate product feeds for shop-the-gap; budget/size filters.
+5. Outfit calendar view, capsule & packing lists, AI stylist chat.
+6. Offline service worker; virtual try-on (paid credits).
