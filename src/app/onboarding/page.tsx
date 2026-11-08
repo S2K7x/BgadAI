@@ -2,7 +2,8 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { Garment } from "@/components/Garment";
-import { Button, Chip, ColorPicker, Spinner } from "@/components/ui";
+import { Hero } from "@/components/Hero";
+import { Button, Chip, ColorPicker, SectionTitle, Spinner } from "@/components/ui";
 import { saveProfile } from "@/lib/db";
 import { looksFor, normalise, topStyles, weightsFromSwipes, type Look } from "@/lib/style";
 import { OCCASIONS, OCCASION_INFO, STYLES, STYLE_INFO, type ColorName, type Occasion, type Style } from "@/lib/taxonomy";
@@ -46,35 +47,48 @@ export default function Onboarding() {
           <button className="text-sm text-muted" onClick={() => setStep(STEPS[STEPS.indexOf(step) - 1])}>
             ← Back
           </button>
-          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-soft">
-            <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${progress * 100}%` }} />
+          <div className="h-1 flex-1 overflow-hidden bg-soft">
+            <div className="h-full bg-ink transition-all dark:bg-accent-text" style={{ width: `${progress * 100}%` }} />
           </div>
         </div>
       )}
 
       {step === "welcome" && (
-        <div className="flex flex-1 flex-col justify-between pt-10">
-          <div>
-            <div className="mb-8 flex gap-2">
-              {(["white", "camel", "navy", "olive"] as ColorName[]).map((c, i) => (
-                <Garment key={c} sub={["t-shirt", "coat", "trousers", "sneakers"][i]} color={c} className="h-16 w-16" />
-              ))}
-            </div>
-            <h1 className="font-display text-[40px] leading-[1.05] font-semibold tracking-tight">
-              Your closet,
-              <br />
-              styled by AI.
-            </h1>
-            <p className="mt-4 text-[17px] leading-relaxed text-muted">
-              Snap your clothes, tell us your style, and get outfits built from what you already own — for the weather, your plans and your taste.
-            </p>
-            <ul className="mt-8 space-y-3 text-[15px]">
-              <li>📸 Photos become a tidy digital closet</li>
-              <li>✨ Daily outfits with a reason for each</li>
-              <li>🖼️ Recreate looks you love from your own clothes</li>
-              <li>🔒 Your photos stay on this device</li>
-            </ul>
-          </div>
+        <div className="flex flex-1 flex-col">
+          <Hero
+            word="BgadAI"
+            accent="Created for you."
+            visuals={[
+              { kind: "garment", sub: "coat", color: "camel" },
+              { kind: "garment", sub: "trousers", color: "navy" },
+            ]}
+            left={
+              <>
+                <p className="display text-[20px]">Your closet, styled by AI</p>
+                <p className="mt-1.5 max-w-[34ch] text-[13px] leading-snug text-muted">
+                  Snap your clothes, tell us your style, and get outfits built from what you already own.
+                </p>
+              </>
+            }
+          />
+
+          <SectionTitle className="mt-6" accent="made by you.">Styled by AI.</SectionTitle>
+
+          <ul className="mt-6 grid grid-cols-2 gap-x-5 gap-y-6">
+            {[
+              ["Digital closet", "Photos become a tidy, tagged wardrobe in seconds."],
+              ["Daily outfits", "Weather-smart looks with a reason for each one."],
+              ["Recreate looks", "Rebuild outfits you love from your own clothes."],
+              ["Private by design", "Your photos stay on this device."],
+            ].map(([t, d]) => (
+              <li key={t}>
+                <h3 className="display text-[17px]">{t}</h3>
+                <p className="mt-1.5 text-[12.5px] leading-snug text-muted">{d}</p>
+              </li>
+            ))}
+          </ul>
+
+          <div className="flex-1" />
           <Button className="mt-10 w-full" onClick={next}>
             Find my style · 2 min
           </Button>
@@ -83,7 +97,7 @@ export default function Onboarding() {
 
       {step === "basics" && (
         <div className="flex flex-1 flex-col">
-          <h2 className="font-display text-2xl font-semibold">A little about you</h2>
+          <h2 className="display text-[34px]">A little about you</h2>
           <Section title="Which clothes should we show you?">
             {(["womenswear", "menswear", "both"] as const).map((w) => (
               <Chip key={w} selected={wardrobe === w} onClick={() => setWardrobe(w)}>
@@ -132,10 +146,10 @@ export default function Onboarding() {
       {step === "result" && weights && (
         <div className="flex flex-1 flex-col">
           <p className="text-sm font-medium tracking-wide text-muted uppercase">Your style mix</p>
-          <h2 className="mt-1 font-display text-3xl font-semibold">
+          <h2 className="display mt-1 text-[40px]">
             {topStyles(weights, 1)[0] ? STYLE_INFO[topStyles(weights, 1)[0].style].label : "Eclectic"}
           </h2>
-          <div className="mt-5 space-y-3 rounded-3xl bg-ink p-5 text-bg">
+          <div className="mt-5 space-y-3 rounded-card bg-ink p-5 text-bg dark:border dark:border-line dark:bg-card dark:text-ink">
             {topStyles(weights, 3).map(({ style, pct }) => (
               <div key={style}>
                 <div className="flex justify-between text-sm">
@@ -145,14 +159,14 @@ export default function Onboarding() {
                   <span className="tabular-nums">{pct}%</span>
                 </div>
                 <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/15">
-                  <div className="h-full rounded-full bg-[#e9c53e]" style={{ width: `${pct}%` }} />
+                  <div className="h-full bg-[#e9c53e] dark:bg-accent-text" style={{ width: `${pct}%` }} />
                 </div>
                 <p className="mt-1 text-xs opacity-70">{STYLE_INFO[style].blurb}</p>
               </div>
             ))}
           </div>
 
-          <details className="mt-5 rounded-2xl border border-line bg-card p-4">
+          <details className="mt-5 rounded-tile border border-line bg-card p-4">
             <summary className="cursor-pointer text-sm font-medium">Fine-tune my mix</summary>
             <div className="mt-4 space-y-3">
               {STYLES.map((s) => (
@@ -218,7 +232,7 @@ function CityStep({ value, onChange, onNext }: { value?: StyleProfile["city"]; o
 
   return (
     <div className="flex flex-1 flex-col">
-      <h2 className="font-display text-2xl font-semibold">Where are you?</h2>
+      <h2 className="display text-[34px]">Where are you?</h2>
       <p className="mt-1 text-sm text-muted">We use the local forecast to pick weather-proof outfits.</p>
       <form
         className="mt-5 flex gap-2"
@@ -231,7 +245,7 @@ function CityStep({ value, onChange, onNext }: { value?: StyleProfile["city"]; o
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="City, e.g. Paris"
-          className="h-12 flex-1 rounded-full border border-line bg-card px-4 outline-none focus:border-ink"
+          className="h-12 flex-1 rounded-btn border border-edge bg-card px-4 outline-none focus:border-ink"
         />
         <Button type="submit" variant="secondary" disabled={q.trim().length < 2}>
           {loading ? <Spinner /> : "Search"}
@@ -245,7 +259,7 @@ function CityStep({ value, onChange, onNext }: { value?: StyleProfile["city"]; o
             <li key={`${r.latitude},${r.longitude}`}>
               <button
                 onClick={() => onChange({ name: r.name, latitude: r.latitude, longitude: r.longitude, country: r.country })}
-                className={`w-full rounded-2xl border px-4 py-3 text-left ${selected ? "border-ink bg-card" : "border-line bg-card/60"}`}
+                className={`w-full rounded-tile border px-4 py-3 text-left ${selected ? "border-ink bg-card" : "border-line bg-card/60"}`}
               >
                 <span className="font-medium">{r.name}</span>
                 <span className="text-sm text-muted"> · {[r.admin1, r.country].filter(Boolean).join(", ")}</span>
@@ -291,7 +305,7 @@ function SwipeDeck({ looks, onDone }: { looks: Look[]; onDone: (s: { look: Look;
 
   return (
     <div className="flex flex-1 flex-col">
-      <h2 className="font-display text-2xl font-semibold">Style Shuffle</h2>
+      <h2 className="display text-[34px]">Style Shuffle</h2>
       <p className="mt-1 text-sm text-muted">
         Would you wear it? Swipe right for yes, left for no. <span className="tabular-nums">{idx + 1}/{deck.length}</span>
       </p>
@@ -335,8 +349,8 @@ function SwipeDeck({ looks, onDone }: { looks: Look[]; onDone: (s: { look: Look;
 
 function LookCard({ look, className = "" }: { look: Look; className?: string }) {
   return (
-    <div className={`absolute inset-0 flex flex-col rounded-[28px] border border-line bg-card p-5 shadow-sm ${className}`}>
-      <div className="cutout-bg grid flex-1 grid-cols-2 place-items-center gap-1 rounded-2xl p-3">
+    <div className={`absolute inset-0 flex flex-col rounded-card border border-line bg-card p-5 shadow-sm ${className}`}>
+      <div className="cutout-bg grid flex-1 grid-cols-2 place-items-center gap-1 rounded-tile p-3">
         {look.pieces.map((p, i) => (
           <Garment key={i} sub={p.sub} color={p.color} className={look.pieces.length === 3 && i === 0 ? "col-span-2 h-28 w-28" : "h-24 w-24"} />
         ))}
@@ -355,7 +369,7 @@ function RoundBtn({ children, onClick, label, big }: { children: React.ReactNode
     <button
       onClick={onClick}
       aria-label={label}
-      className={`grid place-items-center rounded-full border border-line bg-card text-xl shadow-sm active:scale-95 ${big ? "h-16 w-16 text-2xl text-[#d9a400]" : "h-14 w-14"}`}
+      className={`grid place-items-center rounded-btn border border-edge bg-card text-xl shadow-sm active:scale-95 ${big ? "h-16 w-16 text-2xl text-[#d9a400]" : "h-14 w-14"}`}
     >
       {children}
     </button>

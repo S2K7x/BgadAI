@@ -5,7 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useMemo, useState } from "react";
 import { ItemImage } from "@/components/ItemImage";
 import { OutfitBoard } from "@/components/OutfitBoard";
-import { Button, Card, Chip, Empty, Meter, Sheet, Spinner } from "@/components/ui";
+import { Hero, type HeroVisual } from "@/components/Hero";
+import { Button, Chip, Empty, Meter, SectionTitle, Sheet, Spinner } from "@/components/ui";
 import { toEngine, useAiStatus, useItems, useProfile, useWeather } from "@/hooks/data";
 import { db, logWorn, today, uid } from "@/lib/db";
 import { explain, generateOutfits, scoreOutfit, swapOptions, type Candidate, type EngineContext } from "@/lib/outfitEngine";
@@ -124,6 +125,18 @@ function Today() {
     }
   };
 
+  const first = shown[0]?.items.map((i) => byId.get(i.id)).filter((x): x is Item => !!x) ?? [];
+  const heroItems = [
+    first.find((i) => i.category === "top" || i.category === "onepiece") ?? anchor,
+    first.find((i) => i.category === "bottom" || i.category === "outerwear"),
+  ].filter((x): x is Item => !!x);
+  const heroVisuals: HeroVisual[] = heroItems.length
+    ? heroItems.map((i) => ({ kind: "photo", blob: i.thumb, alt: i.name }))
+    : [
+        { kind: "garment", sub: "coat", color: "camel" },
+        { kind: "garment", sub: "t-shirt", color: "white" },
+      ];
+
   if (!items || !profile) return <Spinner />;
 
   const hour = new Date().getHours();
@@ -131,14 +144,20 @@ function Today() {
 
   return (
     <div>
-      <header className="mb-4">
-        <p className="text-sm text-muted">{new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })}</p>
-        <h1 className="font-display text-[28px] leading-tight font-semibold tracking-tight">{greeting}</h1>
-      </header>
+      <Hero
+        word="Today"
+        accent={anchor ? `styled around your ${anchor.name.toLowerCase()}` : "Styled for you."}
+        visuals={heroVisuals}
+        left={
+          <>
+            <p className="label text-muted">{new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })}</p>
+            <p className="display mt-1 text-[22px]">{greeting}</p>
+          </>
+        }
+        right={<WeatherCard profile={profile} weather={weather} loading={wLoading} error={wError} />}
+      />
 
-      <WeatherCard profile={profile} weather={weather} loading={wLoading} error={wError} />
-
-      <div className="no-scrollbar -mx-4 mt-4 flex gap-2 overflow-x-auto px-4">
+      <div className="no-scrollbar -mx-4 mt-2 flex gap-2 overflow-x-auto px-4">
         {OCCASIONS.map((o) => (
           <Chip key={o} selected={occ === o} onClick={() => setOccasion(o)}>
             {OCCASION_INFO[o].emoji} {OCCASION_INFO[o].label}
@@ -147,8 +166,8 @@ function Today() {
       </div>
 
       {anchor && (
-        <div className="mt-4 flex items-center gap-3 rounded-2xl border border-line bg-card p-2 pr-3">
-          <ItemImage blob={anchor.thumb} alt={anchor.name} className="h-12 w-12 rounded-xl" />
+        <div className="mt-4 flex items-center gap-3 rounded-tile border border-line bg-card p-2 pr-3">
+          <ItemImage blob={anchor.thumb} alt={anchor.name} className="h-12 w-12 rounded-tile" />
           <p className="flex-1 text-sm">
             Styling your <b>{anchor.name}</b>
           </p>
@@ -173,8 +192,10 @@ function Today() {
         </div>
       ) : (
         <>
-          <div className="mt-5 flex items-center justify-between">
-            <h2 className="font-semibold">{aiPicks ? "Your stylist's picks" : "Outfits for you"}</h2>
+          <SectionTitle className="mt-8" accent={weather ? `picked for ${Math.round(weather.feelsLikeC)}°C` : `for ${OCCASION_INFO[occ].label.toLowerCase()}`}>
+            {aiPicks ? "Stylist picks" : "Your outfits"}
+          </SectionTitle>
+          <div className="mt-4 flex items-center justify-center">
             <div className="flex gap-2">
               {ai?.ai && !aiPicks && (
                 <Button size="sm" variant="secondary" onClick={askStylist} disabled={aiLoading}>
@@ -241,7 +262,7 @@ function Today() {
       </Sheet>
 
       {toast && (
-        <div role="status" className="pop-in fixed inset-x-0 bottom-24 z-40 mx-auto w-fit rounded-full bg-ink px-4 py-2 text-sm text-bg shadow-lg">
+        <div role="status" className="pop-in fixed inset-x-0 bottom-24 z-40 mx-auto w-fit rounded-btn bg-accent px-4 py-2.5 text-[12px] font-semibold tracking-wide text-accent-ink uppercase shadow-lg">
           {toast}
         </div>
       )}
@@ -260,33 +281,33 @@ function WeatherCard({
   loading: boolean;
   error?: string;
 }) {
+  const box = "block w-[148px] rounded-card border border-line bg-card/90 p-3";
   if (!profile.city)
     return (
-      <Link href="/me#city" className="flex items-center justify-between rounded-3xl border border-dashed border-line p-4 text-sm">
-        <span>🌤️ Add your city for weather-smart outfits</span>
-        <span className="text-muted">→</span>
+      <Link href="/me#city" className={box}>
+        <p className="display text-[16px]">Add your city</p>
+        <p className="mt-1 text-[11px] leading-snug text-muted">For weather-proof outfits.</p>
+        <p className="label mt-2">Set it →</p>
       </Link>
     );
   return (
-    <Card className="flex items-center gap-4">
-      <span className="text-4xl">{weather?.emoji ?? "🌡️"}</span>
-      <div className="flex-1">
-        {error ? (
-          <p className="text-sm text-muted">Couldn&apos;t load the forecast for {profile.city.name} — outfits ignore weather for now.</p>
-        ) : loading || !weather ? (
-          <p className="text-sm text-muted">Getting the forecast for {profile.city.name}…</p>
-        ) : (
-          <>
-            <p className="text-lg font-semibold">
-              {Math.round(weather.tempC)}°C <span className="text-sm font-normal text-muted">feels {Math.round(weather.feelsLikeC)}°</span>
-            </p>
-            <p className="text-sm text-muted">
-              {weather.summary} · {Math.round(weather.tempMinC)}–{Math.round(weather.tempMaxC)}° · ☔ {weather.precipProb}% · {profile.city.name}
-            </p>
-          </>
-        )}
-      </div>
-    </Card>
+    <div className={box}>
+      <p className="label text-muted">{profile.city.name}</p>
+      {error ? (
+        <p className="mt-1 text-[11px] leading-snug text-muted">Forecast unavailable — outfits ignore weather for now.</p>
+      ) : loading || !weather ? (
+        <p className="mt-1 text-[11px] text-muted">Getting forecast…</p>
+      ) : (
+        <>
+          <p className="display mt-1 text-[30px]">
+            {Math.round(weather.tempC)}°<span className="ml-1 text-[18px]">{weather.emoji}</span>
+          </p>
+          <p className="mt-1 text-[11px] leading-snug text-muted">
+            {weather.summary} · {Math.round(weather.tempMinC)}–{Math.round(weather.tempMaxC)}° · ☔ {weather.precipProb}%
+          </p>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -311,10 +332,10 @@ function OutfitCard({
   const [rated, setRated] = useState<1 | -1>();
   const items = c.items.map((i) => byId.get(i.id)).filter((x): x is Item => !!x);
   return (
-    <li className="pop-in rounded-[28px] border border-line bg-card p-3" style={{ animationDelay: `${rank * 60}ms` }}>
+    <li className="pop-in rounded-card border border-line bg-card p-3" style={{ animationDelay: `${rank * 60}ms` }}>
       <OutfitBoard items={items} onPieceClick={onSwapPiece} />
       <div className="px-1 pt-3">
-        {c.title && <p className="font-display text-lg font-semibold">{c.title}</p>}
+        {c.title && <p className="display text-[22px]">{c.title}</p>}
         <p className="text-sm leading-relaxed">{c.aiNote ?? c.explanation}</p>
         <button className="mt-1 text-xs text-muted underline" onClick={() => setWhy(!why)}>
           {why ? "Hide" : "Why this outfit?"} · match {Math.round(c.score.total * 100)}%
@@ -344,7 +365,7 @@ function OutfitCard({
                   setRated(r);
                   onRate(r);
                 }}
-                className={`grid h-9 w-9 place-items-center rounded-full border ${rated === r ? "border-ink bg-ink text-bg" : "border-line"} disabled:opacity-60`}
+                className={`grid h-9 w-9 place-items-center rounded-btn border ${rated === r ? "border-ink bg-ink text-bg dark:border dark:border-line dark:bg-card dark:text-ink" : "border-line"} disabled:opacity-60`}
               >
                 {r > 0 ? "👍" : "👎"}
               </button>
@@ -380,7 +401,7 @@ function SwapList({
         return (
           <li key={item.id}>
             <button onClick={() => onPick(item.id)} className="w-full text-left">
-              <ItemImage blob={full.thumb} alt={item.name} className="aspect-square rounded-2xl" />
+              <ItemImage blob={full.thumb} alt={item.name} className="aspect-square rounded-tile" />
               <p className="mt-1 truncate text-xs">{item.name}</p>
               <p className="text-[11px] text-muted">match {Math.round(score * 100)}%</p>
             </button>

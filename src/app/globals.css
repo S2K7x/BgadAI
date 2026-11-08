@@ -1,31 +1,123 @@
 @import "tailwindcss";
 
+/*
+ * Two themes, one token set:
+ *  - "editorial" (light): monochrome fashion-editorial — ultra-wide uppercase display type,
+ *    square edges, cut-corner photo tiles, black buttons.
+ *  - "synth" (dark): streetwear night mode — condensed display type, purple handwritten
+ *    accent, soft glow, rounded glass panels.
+ * The display face is ONE variable font (Anybody, wdth 50–150) stretched differently per theme.
+ * Theme = system preference unless <html data-theme="light|dark"> is set (inline script in layout).
+ */
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
-  --bg: #f6f3ee;
+  color-scheme: light;
+  --bg: #ffffff;
   --card: #ffffff;
-  --ink: #1f1c19;
-  --muted: #776f66;
-  --line: #e7e1d8;
-  --soft: #efe9e1;
-  --accent: #2f5d4a;
+  --ink: #0b0b0b;
+  --muted: #6d6d6d;
+  --line: #e7e7e7;
+  --edge: #0b0b0b;
+  --soft: #efefef;
+  --accent: #0b0b0b;
   --accent-ink: #ffffff;
-  --good: #2f7d4f;
-  --bad: #b4443a;
+  --accent-text: #0b0b0b;
+  --good: #1f7a45;
+  --bad: #b3261e;
+  --glow: transparent;
+
+  --r-card: 0px;
+  --r-tile: 0px;
+  --r-btn: 0px;
+  --cut: 18px;
+  --tile-clip: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+
+  --display-stretch: 150%;
+  --display-weight: 800;
+  --display-tracking: -0.01em;
+  --display-leading: 0.92;
+  --accent-family: var(--font-anybody);
+  --accent-transform: uppercase;
+  --accent-stretch: 125%;
+  --accent-weight: 700;
+  --accent-lg: 17px;
+  --accent-sm: 12px;
+
+  --nav-bg: #ffffff;
+  --nav-blur: none;
+  --hero-word: #0b0b0b;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #141312;
-    --card: #1d1b19;
-    --ink: #f1ece6;
-    --muted: #a59d93;
-    --line: #2f2b27;
-    --soft: #26231f;
-    --accent: #7cc3a1;
-    --accent-ink: #10201a;
-    --good: #6fcf97;
-    --bad: #ef8a80;
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0e0d10;
+    --card: #19171c;
+    --ink: #ecebef;
+    --muted: #8f8b96;
+    --line: rgb(255 255 255 / 0.08);
+    --edge: rgb(255 255 255 / 0.22);
+    --soft: #232027;
+    --accent: #ecebef;
+    --accent-ink: #111013;
+    --accent-text: #a874ff;
+    --good: #6fd39b;
+    --bad: #ff8a7d;
+    --glow: rgb(140 70 230 / 0.22);
+    --r-card: 22px;
+    --r-tile: 16px;
+    --r-btn: 12px;
+    --tile-clip: none;
+    --display-stretch: 62%;
+    --display-weight: 750;
+    --display-tracking: 0;
+    --display-leading: 0.9;
+    --accent-family: var(--font-rock-salt);
+    --accent-transform: none;
+    --accent-stretch: 100%;
+    --accent-weight: 400;
+    --accent-lg: 30px;
+  --accent-sm: 18px;
+    --nav-bg: rgb(20 18 23 / 0.82);
+    --nav-blur: blur(12px);
+    --hero-word: transparent;
   }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0e0d10;
+  --card: #19171c;
+  --ink: #ecebef;
+  --muted: #8f8b96;
+  --line: rgb(255 255 255 / 0.08);
+  --edge: rgb(255 255 255 / 0.22);
+  --soft: #232027;
+  --accent: #ecebef;
+  --accent-ink: #111013;
+  --accent-text: #a874ff;
+  --good: #6fd39b;
+  --bad: #ff8a7d;
+  --glow: rgb(140 70 230 / 0.22);
+  --r-card: 22px;
+  --r-tile: 16px;
+  --r-btn: 12px;
+  --tile-clip: none;
+  --display-stretch: 62%;
+  --display-weight: 750;
+  --display-tracking: 0;
+  --display-leading: 0.9;
+  --accent-family: var(--font-rock-salt);
+  --accent-transform: none;
+  --accent-stretch: 100%;
+  --accent-weight: 400;
+  --accent-lg: 30px;
+  --accent-sm: 18px;
+  --nav-bg: rgb(20 18 23 / 0.82);
+  --nav-blur: blur(12px);
+  --hero-word: transparent;
 }
 
 @theme inline {
@@ -34,13 +126,18 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-line: var(--line);
+  --color-edge: var(--edge);
   --color-soft: var(--soft);
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
+  --color-accent-text: var(--accent-text);
   --color-good: var(--good);
   --color-bad: var(--bad);
+  --radius-card: var(--r-card);
+  --radius-tile: var(--r-tile);
+  --radius-btn: var(--r-btn);
   --font-sans: var(--font-geist-sans);
-  --font-display: var(--font-fraunces);
+  --font-display: var(--font-anybody);
 }
 
 html,
@@ -52,12 +149,130 @@ body {
 body {
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
+  /* Synth: faint purple glow in the corners (a fixed gradient — no blur cost). */
+  background-image:
+    radial-gradient(60rem 40rem at 110% -10%, var(--glow), transparent 60%),
+    radial-gradient(50rem 30rem at -20% 110%, var(--glow), transparent 60%);
+  background-attachment: fixed;
 }
 
-/* Subtle checkerboard so transparent cut-outs read as cut-outs. */
+/* Big uppercase display type. */
+@utility display {
+  font-family: var(--font-anybody);
+  font-stretch: var(--display-stretch);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+  line-height: var(--display-leading);
+  text-transform: uppercase;
+}
+
+/* Accent line: wide caps in Editorial, purple handwriting in Synth. */
+@utility accent-line {
+  font-family: var(--accent-family);
+  font-stretch: var(--accent-stretch);
+  font-weight: var(--accent-weight);
+  text-transform: var(--accent-transform);
+  color: var(--accent-text);
+  letter-spacing: 0.01em;
+}
+
+@utility accent-lg {
+  font-size: var(--accent-lg);
+  line-height: 1.15;
+}
+@utility accent-sm {
+  font-size: var(--accent-sm);
+  line-height: 1.2;
+}
+
+/* Tiny tracked uppercase labels (nav, chips, captions). */
+@utility label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Photo tiles: cut corner in Editorial, rounded in Synth. */
+@utility tile {
+  border-radius: var(--r-tile);
+  clip-path: var(--tile-clip);
+}
+
 .cutout-bg {
   background-color: var(--soft);
-  background-image: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--card) 70%, transparent), transparent 70%);
+}
+:where([data-theme="dark"]) .cutout-bg {
+  background-image: radial-gradient(circle at 50% 40%, rgb(255 255 255 / 0.06), transparent 70%);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cutout-bg {
+    background-image: radial-gradient(circle at 50% 40%, rgb(255 255 255 / 0.06), transparent 70%);
+  }
+}
+
+/* Hero wordmark: inverts over photos in Editorial; metallic fade behind the garment in Synth.
+   The blend mode sits on the positioned layer, because that layer is its own stacking context. */
+.hero-word {
+  color: white;
+}
+.hero-word-layer {
+  mix-blend-mode: difference;
+}
+:root[data-theme="dark"] .hero-word-layer {
+  mix-blend-mode: normal;
+}
+:root[data-theme="dark"] .hero-word {
+  background: linear-gradient(180deg, #8a8792 0%, rgb(84 80 92 / 0.55) 70%, rgb(40 37 44 / 0.1) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .hero-word-layer {
+    mix-blend-mode: normal;
+  }
+  :root:not([data-theme="light"]) .hero-word {
+    background: linear-gradient(180deg, #8a8792 0%, rgb(84 80 92 / 0.55) 70%, rgb(40 37 44 / 0.1) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+/* Theme-only decorations. */
+.only-editorial {
+  display: revert;
+}
+.only-synth {
+  display: none;
+}
+:root[data-theme="dark"] .only-editorial {
+  display: none;
+}
+:root[data-theme="dark"] .only-synth {
+  display: revert;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .only-editorial {
+    display: none;
+  }
+  :root:not([data-theme="light"]) .only-synth {
+    display: revert;
+  }
+}
+
+.nav-surface {
+  background: var(--nav-bg);
+  -webkit-backdrop-filter: var(--nav-blur);
+  backdrop-filter: var(--nav-blur);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .nav-surface {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--card);
+  }
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -67,10 +282,16 @@ body {
   scrollbar-width: none;
 }
 
+/* Skip rendering work for off-screen grid rows on long closets. */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 260px;
+}
+
 @keyframes pop-in {
   from {
     opacity: 0;
-    transform: translateY(6px) scale(0.98);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -78,11 +299,59 @@ body {
   }
 }
 .pop-in {
-  animation: pop-in 0.25s ease-out both;
+  animation: pop-in 0.3s ease-out both;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--r, 0deg));
+  }
+  50% {
+    transform: translateY(-6px) rotate(var(--r, 0deg));
+  }
+}
+.float {
+  animation: float 6s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pop-in {
+  .pop-in,
+  .float {
     animation: none;
   }
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  container-type: inline-size;
+  /* average glyph advance per character, in em, for each theme's display width */
+  --char-w: 1.04;
+}
+:root[data-theme="dark"] .hero {
+  --char-w: 0.5;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .hero {
+    --char-w: 0.5;
+  }
+}
+/* Fit the wordmark to the container width whatever its length. */
+.hero-word-size {
+  font-size: min(150px, calc(100cqw / (var(--chars) * var(--char-w))));
+}
+/* Editorial: word on top (difference-blends over photos). Synth: word behind the garment. */
+.hero-word-layer {
+  z-index: 2;
+}
+:root[data-theme="dark"] .hero-word-layer {
+  z-index: 0;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .hero-word-layer {
+    z-index: 0;
+  }
+}
+.hero-shadow {
+  filter: drop-shadow(0 18px 24px rgb(0 0 0 / 0.18));
 }

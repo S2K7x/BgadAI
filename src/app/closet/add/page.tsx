@@ -167,7 +167,8 @@ function AddItems() {
   return (
     <div>
       <PageHeader
-        title={quick ? "Quick start" : "Add clothes"}
+        title={quick ? "Quick start" : "Add"}
+        accent="Snap. Tag. Done."
         subtitle={quick ? "Add 5 pieces and we'll style your first outfit." : "Snap one item per photo — or a flat lay of several."}
         action={!quick && <Link href="/closet" className="text-sm text-muted">Cancel</Link>}
       />
@@ -177,7 +178,7 @@ function AddItems() {
           {QUICK.map((q, i) => {
             const have = i === 4 ? allCats.length >= 5 : allCats.some((c) => q.cats.includes(c));
             return (
-              <span key={q.label} className={`shrink-0 rounded-full border px-3 py-1.5 text-sm ${have ? "border-good bg-good/10 text-good" : "border-line text-muted"}`}>
+              <span key={q.label} className={`label shrink-0 rounded-btn border px-3 py-2 ${have ? "border-good bg-good/10 text-good" : "border-line text-muted"}`}>
                 {have ? "✓" : "○"} {q.label}
               </span>
             );
@@ -186,11 +187,11 @@ function AddItems() {
       )}
 
       <div className="grid grid-cols-2 gap-3">
-        <button onClick={() => cameraRef.current?.click()} className="flex h-32 flex-col items-center justify-center gap-2 rounded-3xl bg-ink text-bg active:scale-[0.98]">
+        <button onClick={() => cameraRef.current?.click()} className="flex h-32 flex-col items-center justify-center gap-2 rounded-card bg-ink text-bg dark:border dark:border-line dark:bg-card dark:text-ink active:scale-[0.98]">
           <span className="text-3xl">📷</span>
           <span className="text-sm font-medium">Take photo</span>
         </button>
-        <button onClick={() => galleryRef.current?.click()} className="flex h-32 flex-col items-center justify-center gap-2 rounded-3xl border border-line bg-card active:scale-[0.98]">
+        <button onClick={() => galleryRef.current?.click()} className="flex h-32 flex-col items-center justify-center gap-2 rounded-card border border-line bg-card active:scale-[0.98]">
           <span className="text-3xl">🖼️</span>
           <span className="text-sm font-medium">Choose photos</span>
         </button>
@@ -221,12 +222,12 @@ function AddItems() {
           </h2>
           <ul className="grid grid-cols-2 gap-3">
             {drafts.map((d) => (
-              <li key={d.key} className="pop-in overflow-hidden rounded-3xl border border-line bg-card">
+              <li key={d.key} className="pop-in overflow-hidden rounded-card border border-line bg-card">
                 <div className="relative aspect-square">
                   <ItemImage blob={d.preview} alt={d.tags.name} className="h-full w-full" />
                   {d.status === "processing" && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-card/70 p-3 text-center text-xs text-muted backdrop-blur-[2px]">
-                      <Spinner className="text-accent" />
+                      <Spinner className="text-accent-text" />
                       {d.stage}
                     </div>
                   )}
@@ -249,7 +250,7 @@ function AddItems() {
                         <span className="truncate">{subLabel(d.tags.subcategory)}</span>
                       </div>
                       {d.note && <p className="mt-1 text-[11px] text-muted">{d.note}</p>}
-                      <button disabled={d.status !== "ready"} onClick={() => setEditing(d.key)} className={`mt-2 text-xs font-medium ${d.aiTagged ? "text-accent" : "text-bad"}`}>
+                      <button disabled={d.status !== "ready"} onClick={() => setEditing(d.key)} className={`mt-2 text-xs font-medium ${d.aiTagged ? "text-accent-text" : "text-bad"}`}>
                         {d.aiTagged ? "Edit tags" : "Set type & tags →"}
                       </button>
                     </>
@@ -272,7 +273,7 @@ function AddItems() {
       <Sheet open={!!editingDraft} onClose={() => setEditing(undefined)} title="Item details">
         {editingDraft && (
           <>
-            <ItemImage blob={editingDraft.thumb} alt="" className="mb-5 h-48 rounded-2xl" />
+            <ItemImage blob={editingDraft.thumb} alt="" className="mb-5 h-48 rounded-tile" />
             <TagEditor value={editingDraft.tags} onChange={(tags) => update(editingDraft.key, { tags, aiTagged: true })} />
             <Button className="mt-6 w-full" onClick={() => setEditing(undefined)}>Done</Button>
           </>

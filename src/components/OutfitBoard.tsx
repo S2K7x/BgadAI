@@ -27,7 +27,7 @@ export function OutfitBoard({
       type="button"
       disabled={!onPieceClick}
       onClick={() => onPieceClick?.(item)}
-      className={`group relative block min-h-0 overflow-hidden rounded-2xl ${className}`}
+      className={`group relative block min-h-0 overflow-hidden rounded-tile ${className}`}
       aria-label={onPieceClick ? `Swap ${item.name}` : item.name}
     >
       <ItemImage blob={item.thumb} alt={item.name} className="h-full w-full" />

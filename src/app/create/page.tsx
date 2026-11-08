@@ -17,10 +17,10 @@ export default function CreatePage() {
   const [tab, setTab] = useState<"build" | "saved">("build");
   return (
     <div>
-      <PageHeader title="Create" subtitle="Build your own looks — we'll tell you how they score." />
-      <div className="mb-5 grid grid-cols-2 rounded-full bg-soft p-1 text-sm font-medium">
+      <PageHeader title="Create" accent="Mix & match." subtitle="Build your own looks — we'll tell you how they score." />
+      <div className="mb-5 grid grid-cols-2 border-b border-line">
         {(["build", "saved"] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)} className={`h-9 rounded-full ${tab === t ? "bg-card shadow-sm" : "text-muted"}`}>
+          <button key={t} onClick={() => setTab(t)} className={`label -mb-px h-10 border-b-2 ${tab === t ? "border-ink text-ink dark:border-accent-text" : "border-transparent text-muted"}`}>
             {t === "build" ? "Build outfit" : "Saved outfits"}
           </button>
         ))}
@@ -136,9 +136,9 @@ function Builder({ onSaved }: { onSaved: () => void }) {
                   key={i.id}
                   onClick={() => pick(slot, i.id)}
                   aria-pressed={sel[slot] === i.id}
-                  className={`shrink-0 rounded-2xl p-0.5 ${sel[slot] === i.id ? "ring-2 ring-ink" : ""}`}
+                  className={`shrink-0 rounded-tile p-0.5 ${sel[slot] === i.id ? "ring-2 ring-ink" : ""}`}
                 >
-                  <ItemImage blob={i.thumb} alt={i.name} className="h-20 w-20 rounded-[14px]" />
+                  <ItemImage blob={i.thumb} alt={i.name} className="h-20 w-20 rounded-tile" />
                 </button>
               ))}
             </div>
@@ -147,7 +147,7 @@ function Builder({ onSaved }: { onSaved: () => void }) {
       })}
 
       {chosen.length >= 2 && (
-        <div className="sticky bottom-24 z-20 flex gap-2 rounded-full border border-line bg-card p-1.5 shadow-lg">
+        <div className="sticky bottom-24 z-20 flex gap-2 rounded-btn border border-edge bg-card p-1.5 shadow-lg">
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name this look" className="min-w-0 flex-1 bg-transparent px-3 text-sm outline-none" />
           <Button size="sm" onClick={save}>Save</Button>
         </div>
@@ -177,11 +177,11 @@ function Saved() {
       {sorted.map((o: Outfit) => {
         const its = o.pieces.map((p) => byId.get(p.itemId)).filter((x): x is Item => !!x);
         return (
-          <li key={o.id} className="rounded-[28px] border border-line bg-card p-3">
+          <li key={o.id} className="rounded-card border border-line bg-card p-3">
             <OutfitBoard items={its} compact />
             <div className="px-1 pt-3">
               <div className="flex items-center justify-between">
-                <p className="font-semibold">{o.name}</p>
+                <p className="display text-[18px]">{o.name}</p>
                 <span className="text-xs text-muted">
                   {o.source === "ai" ? "✨ AI" : o.source === "inspo" ? "🖼️ Inspo" : "✋ Yours"}
                   {o.occasion && ` · ${OCCASION_INFO[o.occasion].label}`}

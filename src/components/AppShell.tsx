@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useProfile } from "@/hooks/data";
 import { getProfile } from "@/lib/db";
+import { useTheme } from "@/hooks/theme";
 
 const NAV = [
   { href: "/", label: "Today", icon: SunIcon },
@@ -33,14 +34,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col">
-      <main className={`flex-1 px-4 pt-[max(env(safe-area-inset-top),16px)] ${onboarding ? "pb-8" : "pb-28"}`}>
-        {children}
-      </main>
+      <header className="flex items-center justify-between px-4 pt-[max(env(safe-area-inset-top),12px)] pb-1">
+        <Link href="/" aria-label="BgadAI home" className="flex items-center gap-1.5">
+          <span className="only-synth h-4 w-1.5 bg-ink" aria-hidden />
+          <span className="display text-[17px] tracking-[0.08em] [font-stretch:var(--display-stretch)]">BgadAI</span>
+        </Link>
+        <ThemeToggle />
+      </header>
+      <main className={`flex-1 px-4 pt-3 ${onboarding ? "pb-8" : "pb-28"}`}>{children}</main>
       {!onboarding && (
-        <nav
-          aria-label="Main"
-          className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-card/90 pb-[env(safe-area-inset-bottom)] backdrop-blur"
-        >
+        <nav aria-label="Main" className="nav-surface fixed inset-x-0 bottom-0 z-30 border-t border-line pb-[env(safe-area-inset-bottom)]">
           <ul className="mx-auto grid max-w-md grid-cols-5">
             {NAV.map(({ href, label, icon: Icon }) => {
               const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -49,8 +52,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <Link
                     href={href}
                     aria-current={active ? "page" : undefined}
-                    className={`flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium ${active ? "text-accent" : "text-muted"}`}
+                    className={`relative flex flex-col items-center gap-1 pt-2.5 pb-2 label ${active ? "text-ink dark:text-accent-text" : "text-muted"}`}
                   >
+                    {active && <span className="absolute top-0 h-[2px] w-8 bg-ink dark:bg-accent-text" aria-hidden />}
                     <Icon active={active} />
                     {label}
                   </Link>
@@ -61,6 +65,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </nav>
       )}
     </div>
+  );
+}
+
+function ThemeToggle() {
+  const { resolved, setPref } = useTheme();
+  const dark = resolved === "dark";
+  return (
+    <button
+      type="button"
+      onClick={() => setPref(dark ? "light" : "dark")}
+      aria-label={dark ? "Switch to Editorial (light) theme" : "Switch to Synth (dark) theme"}
+      className="label flex h-8 items-center gap-1.5 rounded-btn border border-edge px-2.5 text-ink"
+    >
+      <span aria-hidden>{dark ? "☾" : "☀"}</span>
+      {dark ? "Synth" : "Editorial"}
+    </button>
   );
 }
 

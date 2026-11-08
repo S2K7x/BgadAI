@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { ItemImage } from "@/components/ItemImage";
-import { Button, Card, Chip, ColorPicker, PageHeader, Spinner } from "@/components/ui";
+import { Button, Card, Chip, ColorPicker, PageHeader, Spinner, Stats } from "@/components/ui";
+import { useTheme, type ThemePref } from "@/hooks/theme";
 import { useAiStatus, useItems, useProfile } from "@/hooks/data";
 import { db, exportAll, importAll, saveProfile, wipeAll } from "@/lib/db";
 import { verifyBackgroundRemoval } from "@/lib/image";
@@ -24,10 +25,18 @@ export default function MePage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Me" subtitle={`${items.length} pieces · ${outfits ?? 0} saved outfits · ${logs ?? 0} days logged`} />
+      <PageHeader title="Me" accent="Your style, your rules." />
+      <Stats
+        items={[
+          { value: items.length, label: "Pieces" },
+          { value: outfits ?? 0, label: "Outfits" },
+          { value: logs ?? 0, label: "Days logged" },
+        ]}
+      />
 
-      <section className="rounded-[28px] bg-ink p-5 text-bg">
-        <p className="text-xs tracking-wide uppercase opacity-60">Your style mix</p>
+      <section className="relative overflow-hidden rounded-card bg-ink p-5 text-bg dark:border dark:border-line dark:bg-card dark:text-ink">
+        <p className="label opacity-60">Your style mix</p>
+        <p className="display mt-2 text-[30px]">{styles[0] ? STYLE_INFO[styles[0].style].label : "Not set yet"}</p>
         {styles.length ? (
           <div className="mt-3 space-y-3">
             {styles.map(({ style, pct }) => (
@@ -37,7 +46,7 @@ export default function MePage() {
                   <span className="tabular-nums">{pct}%</span>
                 </div>
                 <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/15">
-                  <div className="h-full rounded-full bg-[#e9c53e]" style={{ width: `${pct}%` }} />
+                  <div className="h-full bg-[#e9c53e] dark:bg-accent-text" style={{ width: `${pct}%` }} />
                 </div>
               </div>
             ))}
@@ -53,7 +62,7 @@ export default function MePage() {
       <Insights />
 
       <Card className="space-y-5">
-        <h2 className="font-semibold">Preferences</h2>
+        <h2 className="display text-[20px]">Preferences</h2>
         <CitySetting />
         <div>
           <p className="mb-2 text-sm font-medium">Clothes shown</p>
@@ -80,9 +89,9 @@ export default function MePage() {
       </Card>
 
       <Card className="space-y-4">
-        <h2 className="font-semibold">AI & photos</h2>
+        <h2 className="display text-[20px]">AI & photos</h2>
         <BgRemovalSetting enabled={profile.backgroundRemoval} />
-        <div className="rounded-2xl bg-soft p-3 text-sm">
+        <div className="rounded-tile bg-soft p-3 text-sm">
           <p>
             <b>AI tagging & stylist:</b> {ai === undefined ? "checking…" : ai.ai ? "✅ on" : "off — set ANTHROPIC_API_KEY on the server"}
           </p>
@@ -95,7 +104,22 @@ export default function MePage() {
         </div>
       </Card>
 
+      <Appearance />
+
       <DataSettings />
+
+      <footer className="hero relative pt-10 pb-4 text-center">
+        <div className="flex justify-between">
+          <span className="label text-muted">Wear more</span>
+          <span className="label text-muted">Buy less</span>
+        </div>
+        <p className="display hero-word-size mt-3 leading-[0.85] whitespace-nowrap" style={{ ["--chars" as string]: 13.5 }}>
+          Dress beyond
+          <br />
+          boundaries
+        </p>
+        <p className="accent-line accent-lg mt-3">BgadAI · styled for you.</p>
+      </footer>
     </div>
   );
 }
@@ -126,17 +150,17 @@ function Insights() {
 
   return (
     <Card className="space-y-5">
-      <h2 className="font-semibold">Wardrobe insights</h2>
+      <h2 className="display text-[20px]">Wardrobe insights</h2>
       <div className="grid grid-cols-3 gap-2 text-center">
-        <div className="rounded-2xl bg-soft p-3">
+        <div className="rounded-tile bg-soft p-3">
           <div className="text-xl font-semibold">{Math.round(((total - stats.never.length) / total) * 100)}%</div>
           <div className="text-xs text-muted">worn at least once</div>
         </div>
-        <div className="rounded-2xl bg-soft p-3">
+        <div className="rounded-tile bg-soft p-3">
           <div className="text-xl font-semibold">{stats.never.length}</div>
           <div className="text-xs text-muted">never worn</div>
         </div>
-        <div className="rounded-2xl bg-soft p-3">
+        <div className="rounded-tile bg-soft p-3">
           <div className="text-xl font-semibold">{stats.priced.length ? Math.round(stats.value) : "—"}</div>
           <div className="text-xs text-muted">closet value</div>
         </div>
@@ -144,7 +168,7 @@ function Insights() {
 
       <div>
         <p className="mb-2 text-sm font-medium">Colour palette</p>
-        <div className="flex h-4 overflow-hidden rounded-full">
+        <div className="flex h-3 overflow-hidden">
           {stats.colors.map(({ c, n }) => (
             <span key={c} title={`${c}: ${n}`} style={{ flex: n, background: COLORS[c] }} className="h-full" />
           ))}
@@ -156,7 +180,7 @@ function Insights() {
         <p className="mb-2 text-sm font-medium">By category</p>
         <div className="flex flex-wrap gap-2 text-xs">
           {[...stats.byCat.entries()].map(([c, n]) => (
-            <span key={c} className="rounded-full bg-soft px-2.5 py-1">{CATEGORY_LABELS[c as keyof typeof CATEGORY_LABELS]} {n}</span>
+            <span key={c} className="label rounded-btn border border-edge px-2.5 py-1">{CATEGORY_LABELS[c as keyof typeof CATEGORY_LABELS]} {n}</span>
           ))}
         </div>
       </div>
@@ -178,7 +202,7 @@ function ItemStrip({ title, items }: { title: string; items: { item: NonNullable
         {items.map(({ item, note, href }) => {
           const inner = (
             <>
-              <ItemImage blob={item.thumb} alt={item.name} className="h-16 w-16 rounded-xl" />
+              <ItemImage blob={item.thumb} alt={item.name} className="h-16 w-16 rounded-tile" />
               <p className="mt-0.5 text-center text-[11px] text-muted">{note}</p>
             </>
           );
@@ -213,7 +237,7 @@ function CitySetting() {
           }
         }}
       >
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search a city" className="h-10 flex-1 rounded-full border border-line bg-bg px-4 text-sm" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search a city" className="h-10 flex-1 rounded-btn border border-edge bg-bg px-4 text-sm" />
         <Button size="sm" variant="secondary" type="submit" disabled={q.trim().length < 2}>{loading ? <Spinner /> : "Search"}</Button>
       </form>
       {results.length > 0 && (
@@ -221,7 +245,7 @@ function CitySetting() {
           {results.map((r) => (
             <li key={`${r.latitude},${r.longitude}`}>
               <button
-                className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-soft"
+                className="w-full rounded-tile px-3 py-2 text-left text-sm hover:bg-soft"
                 onClick={async () => {
                   await saveProfile({ city: { name: r.name, latitude: r.latitude, longitude: r.longitude, country: r.country } });
                   setResults([]);
@@ -277,13 +301,40 @@ function BgRemovalSetting({ enabled }: { enabled: boolean }) {
   );
 }
 
+function Appearance() {
+  const { pref, setPref } = useTheme();
+  const opts: { v: ThemePref; label: string; note: string }[] = [
+    { v: "light", label: "Editorial", note: "Monochrome, wide type, square edges" },
+    { v: "dark", label: "Synth", note: "Night mode, condensed type, purple script" },
+    { v: "system", label: "Auto", note: "Follow my device" },
+  ];
+  return (
+    <Card className="space-y-3">
+      <h2 className="display text-[20px]">Appearance</h2>
+      <div className="grid grid-cols-3 gap-2">
+        {opts.map((o) => (
+          <button
+            key={o.v}
+            onClick={() => setPref(o.v)}
+            aria-pressed={pref === o.v}
+            className={`rounded-btn border p-2.5 text-left ${pref === o.v ? "border-ink bg-soft dark:border-accent-text" : "border-line"}`}
+          >
+            <span className="label block text-ink">{o.label}</span>
+            <span className="mt-1 block text-[10.5px] leading-snug text-muted">{o.note}</span>
+          </button>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
 function DataSettings() {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [msg, setMsg] = useState<string>();
   return (
     <Card className="space-y-3">
-      <h2 className="font-semibold">Your data</h2>
+      <h2 className="display text-[20px]">Your data</h2>
       <p className="text-xs text-muted">Everything lives in this browser. Export a backup to move devices.</p>
       <div className="grid grid-cols-2 gap-2">
         <Button

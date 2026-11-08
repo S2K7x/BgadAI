@@ -1,13 +1,14 @@
 "use client";
+import { useLiveQuery } from "dexie-react-hooks";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { ItemImage } from "@/components/ItemImage";
 import { TagEditor } from "@/components/TagEditor";
-import { Button, Chip, Empty, PageHeader, Sheet, Spinner, Swatch } from "@/components/ui";
+import { Button, Chip, Empty, PageHeader, Sheet, Spinner, Stats, Swatch } from "@/components/ui";
 import { useItems } from "@/hooks/data";
 import { db } from "@/lib/db";
-import { CATEGORIES, CATEGORY_LABELS, COLOR_NAMES, type Category, type ColorName } from "@/lib/taxonomy";
+import { CATEGORIES, CATEGORY_LABELS, COLOR_NAMES, subLabel, type Category, type ColorName } from "@/lib/taxonomy";
 import type { Item, ItemTags } from "@/lib/types";
 
 export default function ClosetPage() {
@@ -36,6 +37,8 @@ export default function ClosetPage() {
     for (const i of items ?? []) if (i.status !== "archived") m.set(i.category, (m.get(i.category) ?? 0) + 1);
     return m;
   }, [items]);
+  const active = useMemo(() => (items ?? []).filter((i) => i.status !== "archived"), [items]);
+  const outfitCount = useLiveQuery(() => db.outfits.count(), []);
   const usedColors = useMemo(() => COLOR_NAMES.filter((c) => items?.some((i) => i.colors.includes(c))), [items]);
 
   if (!items) return <Spinner />;
@@ -44,13 +47,26 @@ export default function ClosetPage() {
     <div>
       <PageHeader
         title="Closet"
-        subtitle={`${items.filter((i) => i.status !== "archived").length} pieces`}
+        accent="Your collection."
+        subtitle="Every piece you own, tagged and ready to style."
         action={
           <Link href="/closet/add">
             <Button size="sm">+ Add</Button>
           </Link>
         }
       />
+      {items.length > 0 && (
+        <div className="mb-6">
+          <Stats
+            items={[
+              { value: active.length, label: "Pieces" },
+              { value: counts.size, label: "Categories" },
+              { value: outfitCount ?? 0, label: "Outfits" },
+              { value: `${active.length ? Math.round((active.filter((i) => i.wearCount > 0).length / active.length) * 100) : 0}%`, label: "Worn" },
+            ]}
+          />
+        </div>
+      )}
 
       {items.length === 0 ? (
         <Empty emoji="🧺" title="Your closet is empty">
@@ -65,7 +81,7 @@ export default function ClosetPage() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search name, brand, colour, style…"
-            className="mb-3 h-11 w-full rounded-full border border-line bg-card px-4 text-sm outline-none focus:border-ink"
+            className="mb-4 h-11 w-full rounded-btn border border-edge bg-transparent px-4 text-sm outline-none placeholder:text-muted focus:border-ink"
           />
           <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
             <Chip selected={cat === "all"} onClick={() => setCat("all")}>All</Chip>
@@ -81,21 +97,28 @@ export default function ClosetPage() {
                 <Swatch color={c} size={22} ring={color === c} />
               </button>
             ))}
-            <label className="ml-auto flex shrink-0 items-center gap-1.5 text-xs text-muted">
+            <label className="label ml-auto flex shrink-0 items-center gap-1.5 text-muted">
               <input type="checkbox" checked={showLaundry} onChange={(e) => setShowLaundry(e.target.checked)} className="accent-[var(--accent)]" />
               show laundry
             </label>
           </div>
 
-          <ul className="mt-4 grid grid-cols-3 gap-2.5">
+          <ul className="mt-5 grid grid-cols-2 gap-x-3 gap-y-6">
             {visible.map((i) => (
-              <li key={i.id}>
-                <button onClick={() => setOpen(i)} className="block w-full text-left">
+              <li key={i.id} className="cv-auto">
+                <button onClick={() => setOpen(i)} className="group block w-full text-center">
                   <div className="relative">
-                    <ItemImage blob={i.thumb} alt={i.name} className={`aspect-[4/5] rounded-2xl ${i.status === "laundry" ? "opacity-40" : ""}`} />
-                    {i.status === "laundry" && <span className="absolute top-1.5 left-1.5 rounded-full bg-card px-1.5 text-[10px]">🧺 laundry</span>}
+                    <ItemImage
+                      blob={i.thumb}
+                      alt={i.name}
+                      className={`aspect-[3/4] transition group-active:scale-[0.98] ${i.status === "laundry" ? "opacity-40" : ""}`}
+                    />
+                    {i.status === "laundry" && <span className="label absolute top-2 left-2 bg-card px-1.5 py-0.5">Laundry</span>}
                   </div>
-                  <p className="mt-1 truncate text-xs text-muted">{i.name}</p>
+                  <p className="mt-2 truncate text-[12.5px] font-medium">{i.name}</p>
+                  <p className="label mt-0.5 text-muted">
+                    {subLabel(i.subcategory)} · {i.wearCount ? `worn ${i.wearCount}×` : "new"}
+                  </p>
                 </button>
               </li>
             ))}
@@ -132,7 +155,7 @@ function ItemDetail({ item, onClose, onStyle }: { item: Item; onClose: () => voi
 
   return (
     <div>
-      <ItemImage blob={item.image} alt={item.name} className="h-64 rounded-3xl" />
+      <ItemImage blob={item.image} alt={item.name} className="h-64 rounded-card" />
       <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
         <Stat label="Worn" value={`${item.wearCount}×`} />
         <Stat label="Last worn" value={item.lastWornAt ? new Date(item.lastWornAt).toLocaleDateString() : "never"} />
@@ -153,7 +176,7 @@ function ItemDetail({ item, onClose, onStyle }: { item: Item; onClose: () => voi
       </div>
 
       {!editing ? (
-        <button className="mt-5 w-full text-sm font-medium text-accent" onClick={() => setEditing(true)}>
+        <button className="mt-5 w-full text-sm font-medium text-accent-text" onClick={() => setEditing(true)}>
           Edit details
         </button>
       ) : (
@@ -162,11 +185,11 @@ function ItemDetail({ item, onClose, onStyle }: { item: Item; onClose: () => voi
           <div className="grid grid-cols-2 gap-3 text-sm">
             <label>
               <span className="mb-1 block text-xs font-medium text-muted uppercase">Brand</span>
-              <input value={brand} onChange={(e) => setBrand(e.target.value)} className="h-11 w-full rounded-xl border border-line bg-bg px-3" />
+              <input value={brand} onChange={(e) => setBrand(e.target.value)} className="h-11 w-full rounded-tile border border-line bg-bg px-3" />
             </label>
             <label>
               <span className="mb-1 block text-xs font-medium text-muted uppercase">Price paid</span>
-              <input value={price} inputMode="decimal" onChange={(e) => setPrice(e.target.value)} className="h-11 w-full rounded-xl border border-line bg-bg px-3" />
+              <input value={price} inputMode="decimal" onChange={(e) => setPrice(e.target.value)} className="h-11 w-full rounded-tile border border-line bg-bg px-3" />
             </label>
           </div>
           <Button className="w-full" onClick={save}>Save changes</Button>
@@ -190,7 +213,7 @@ function ItemDetail({ item, onClose, onStyle }: { item: Item; onClose: () => voi
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-soft p-2.5">
+    <div className="rounded-tile bg-soft p-2.5">
       <div className="text-[15px] font-semibold">{value}</div>
       <div className="text-muted">{label}</div>
     </div>

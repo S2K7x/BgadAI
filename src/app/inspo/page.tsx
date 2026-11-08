@@ -84,14 +84,15 @@ export default function InspoPage() {
   return (
     <div>
       <PageHeader
-        title="Inspiration"
+        title="Inspo"
+        accent="Love it? Rebuild it."
         subtitle="Upload a look you love — we'll rebuild it from your closet and find the missing pieces."
       />
 
       <button
         onClick={() => fileRef.current?.click()}
         disabled={!!busy}
-        className="flex w-full items-center justify-center gap-3 rounded-3xl bg-ink py-5 text-bg active:scale-[0.99] disabled:opacity-70"
+        className="flex w-full items-center justify-center gap-3 rounded-card bg-ink py-5 text-bg dark:border dark:border-line dark:bg-card dark:text-ink active:scale-[0.99] disabled:opacity-70"
       >
         {busy ? (
           <>
@@ -112,9 +113,9 @@ export default function InspoPage() {
       {active ? (
         <section className="mt-6">
           <div className="grid grid-cols-[2fr_3fr] gap-3">
-            <ItemImage blob={active.image} alt="Inspiration" fit="cover" className="aspect-[3/4] rounded-3xl" />
+            <ItemImage blob={active.image} alt="Inspiration" fit="cover" className="aspect-[3/4] rounded-card" />
             <div className="flex flex-col justify-center">
-              <p className="font-display text-2xl font-semibold">
+              <p className="display text-[44px]">
                 {ownedCount}/{matches.length || 0}
               </p>
               <p className="text-sm text-muted">pieces found in your closet</p>
@@ -158,8 +159,8 @@ export default function InspoPage() {
           <h2 className="mb-2 text-sm font-semibold">Previous looks</h2>
           <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
             {inspirations.map((i) => (
-              <button key={i.id} onClick={() => { setActiveId(i.id); setSummary(undefined); setSaved(false); }} className={`shrink-0 rounded-2xl p-0.5 ${active?.id === i.id ? "ring-2 ring-ink" : ""}`}>
-                <ItemImage blob={i.image} alt="" fit="cover" className="h-24 w-[72px] rounded-[14px]" />
+              <button key={i.id} onClick={() => { setActiveId(i.id); setSummary(undefined); setSaved(false); }} className={`shrink-0 rounded-tile p-0.5 ${active?.id === i.id ? "ring-2 ring-ink" : ""}`}>
+                <ItemImage blob={i.image} alt="" fit="cover" className="h-24 w-[72px] rounded-tile" />
               </button>
             ))}
           </div>
@@ -177,8 +178,8 @@ function MatchRow({ m, byId, onShop, onRemove }: { m: GarmentMatch; byId: Map<st
   const owned = m.owned && m.best ? byId.get(m.best.item.id) : undefined;
   const close = !m.owned && m.best ? byId.get(m.best.item.id) : undefined;
   return (
-    <li className="flex items-center gap-3 rounded-3xl border border-line bg-card p-2.5">
-      <div className="cutout-bg grid h-16 w-16 shrink-0 place-items-center rounded-2xl">
+    <li className="flex items-center gap-3 rounded-card border border-line bg-card p-2.5">
+      <div className="cutout-bg grid h-16 w-16 shrink-0 place-items-center rounded-tile">
         <Garment sub={m.garment.subcategory} color={m.garment.colors[0] ?? "grey"} className="h-12 w-12" />
       </div>
       <div className="min-w-0 flex-1">
@@ -189,11 +190,11 @@ function MatchRow({ m, byId, onShop, onRemove }: { m: GarmentMatch; byId: Map<st
           <p className="text-xs text-muted">{close ? `Closest: ${close.name} (${Math.round(m.best!.score * 100)}%)` : "Not in your closet"}</p>
         )}
         <div className="mt-1 flex gap-3 text-xs">
-          {!owned && <button onClick={onShop} className="font-medium text-accent">Shop similar →</button>}
+          {!owned && <button onClick={onShop} className="font-medium text-accent-text">Shop similar →</button>}
           <button onClick={onRemove} className="text-muted">remove</button>
         </div>
       </div>
-      {(owned ?? close) && <ItemImage blob={(owned ?? close)!.thumb} alt="" className={`h-16 w-16 shrink-0 rounded-2xl ${owned ? "" : "opacity-50"}`} />}
+      {(owned ?? close) && <ItemImage blob={(owned ?? close)!.thumb} alt="" className={`h-16 w-16 shrink-0 rounded-tile ${owned ? "" : "opacity-50"}`} />}
     </li>
   );
 }
@@ -205,7 +206,7 @@ function ManualGarment({ onAdd }: { onAdd: (g: DetectedGarment) => void }) {
   const [colors, setColors] = useState<ColorName[]>([]);
   if (!open)
     return (
-      <button className="mt-3 w-full rounded-2xl border border-dashed border-line py-3 text-sm text-muted" onClick={() => setOpen(true)}>
+      <button className="mt-3 w-full rounded-tile border border-dashed border-line py-3 text-sm text-muted" onClick={() => setOpen(true)}>
         + Add a piece by hand
       </button>
     );
@@ -265,7 +266,7 @@ function ShopPanel({ garment, wardrobe, shopping }: { garment: DetectedGarment; 
   return (
     <div className="space-y-4 pb-4">
       <p className="text-sm text-muted">{garment.description}</p>
-      <input value={q} onChange={(e) => setQ(e.target.value)} className="h-11 w-full rounded-full border border-line bg-bg px-4 text-sm" />
+      <input value={q} onChange={(e) => setQ(e.target.value)} className="h-11 w-full rounded-btn border border-edge bg-bg px-4 text-sm" />
       {shopping && (
         <Button className="w-full" onClick={search} disabled={loading}>
           {loading ? <Spinner /> : "Find products"}
@@ -278,7 +279,7 @@ function ShopPanel({ garment, wardrobe, shopping }: { garment: DetectedGarment; 
             <li key={r.link}>
               <a href={r.link} target="_blank" rel="noopener noreferrer" className="block">
                 {/* eslint-disable-next-line @next/next/no-img-element -- remote merchant thumbnails */}
-                {r.thumbnail && <img src={r.thumbnail} alt="" className="aspect-square w-full rounded-2xl bg-soft object-contain" />}
+                {r.thumbnail && <img src={r.thumbnail} alt="" className="aspect-square w-full rounded-tile bg-soft object-contain" />}
                 <p className="mt-1 line-clamp-2 text-xs">{r.title}</p>
                 <p className="text-xs font-semibold">{r.price} <span className="font-normal text-muted">· {r.source}</span></p>
               </a>
@@ -289,7 +290,7 @@ function ShopPanel({ garment, wardrobe, shopping }: { garment: DetectedGarment; 
       )}
       <div className="space-y-2">
         {shoppingLinks(q).map((l) => (
-          <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between rounded-2xl border border-line px-4 py-3 text-sm">
+          <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between rounded-tile border border-line px-4 py-3 text-sm">
             {l.label} <span className="text-muted">↗</span>
           </a>
         ))}

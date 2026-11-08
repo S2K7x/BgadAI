@@ -21,6 +21,9 @@ A mobile-first web app (installable PWA) that builds outfits from **your own clo
 - 🔒 **Local-first** — your closet lives in the browser (IndexedDB). Photos are sent to the AI only
   when you analyse them and are never stored server-side.
 
+- 🎨 **Two looks** — *Editorial* (monochrome, ultra-wide type, cut-corner tiles) and *Synth*
+  (dark streetwear, condensed type, purple handwriting). See **[docs/DESIGN.md](docs/DESIGN.md)**.
+
 See **[docs/RESEARCH_AND_PLAN.md](docs/RESEARCH_AND_PLAN.md)** for the competitive research
 (Whering, Alta, Acloset, Indyx, GetWardrobe, Stitch Fix…), UX principles and the roadmap.
 

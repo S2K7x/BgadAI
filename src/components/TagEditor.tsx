@@ -26,7 +26,7 @@ export function TagEditor({ value, onChange }: { value: ItemTags; onChange: (v: 
         <input
           value={value.name}
           onChange={(e) => set("name", e.target.value)}
-          className="h-11 w-full rounded-xl border border-line bg-bg px-3 outline-none focus:border-ink"
+          className="h-11 w-full rounded-tile border border-line bg-bg px-3 outline-none focus:border-ink"
         />
       </Field>
 
