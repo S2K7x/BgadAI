@@ -1,6 +1,8 @@
 # BgadAI — your AI stylist
 
-A mobile-first web app (installable PWA) that builds outfits from **your own clothes**, tuned to
+![BgadAI — your closet, styled by AI](marketing/screenshots/banner.jpg)
+
+A web app for **phone and desktop** (installable PWA, works offline) that builds outfits from **your own clothes**, tuned to
 **your style**, the **weather** and the **occasion**.
 
 - 📸 **Add clothes fast** — snap or pick many photos at once; AI tags type, colours, pattern,
@@ -42,6 +44,17 @@ A mobile-first web app (installable PWA) that builds outfits from **your own clo
 
 See **[docs/RESEARCH_AND_PLAN.md](docs/RESEARCH_AND_PLAN.md)** for the competitive research
 (Whering, Alta, Acloset, Indyx, GetWardrobe, Stitch Fix…), UX principles and the roadmap.
+
+## Screenshots
+
+| Today | Closet | Plan | Before you buy | Style Wrapped |
+|---|---|---|---|---|
+| ![](marketing/screenshots/mobile-light-today.jpg) | ![](marketing/screenshots/mobile-light-closet.jpg) | ![](marketing/screenshots/mobile-dark-plan.jpg) | ![](marketing/screenshots/mobile-light-buy-check.jpg) | ![](marketing/screenshots/mobile-dark-wrapped.jpg) |
+
+![Desktop — closet](marketing/screenshots/desktop-light-closet.jpg)
+
+🎬 Promo video: [vertical 9:16](marketing/video/bgadai-promo-9x16.mp4) · [horizontal 16:9](marketing/video/bgadai-promo-16x9.mp4) ·
+📸 [Instagram carousel](marketing/instagram) · full kit in [`marketing/`](marketing/README.md).
 
 ## Run it
 

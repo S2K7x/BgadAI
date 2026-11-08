@@ -93,8 +93,9 @@ function Builder({ onSaved }: { onSaved: () => void }) {
   };
 
   return (
-    <div className="space-y-5">
-      <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
+    <div className="space-y-5 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:items-start lg:gap-8 lg:space-y-0">
+      <div className="space-y-5 lg:sticky lg:top-8">
+      <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:flex-wrap lg:px-0">
         {OCCASIONS.map((o) => (
           <Chip key={o} selected={occasion === o} onClick={() => setOccasion(o)}>
             {OCCASION_INFO[o].emoji} {OCCASION_INFO[o].label}
@@ -124,6 +125,8 @@ function Builder({ onSaved }: { onSaved: () => void }) {
         </div>
       </Card>
 
+      </div>
+      <div className="space-y-5">
       {SLOTS.map((slot) => {
         const options = items.filter((i) => i.category === slot && i.status !== "archived");
         if (!options.length) return null;
@@ -146,6 +149,7 @@ function Builder({ onSaved }: { onSaved: () => void }) {
         );
       })}
 
+      </div>
       {chosen.length >= 2 && (
         <div className="sticky bottom-24 z-20 flex gap-2 rounded-btn border border-edge bg-card p-1.5 shadow-lg">
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name this look" className="min-w-0 flex-1 bg-transparent px-3 text-sm outline-none" />
@@ -172,7 +176,7 @@ function Saved() {
 
   const sorted = [...outfits].sort((a, b) => Number(!!b.favorite) - Number(!!a.favorite));
   return (
-    <ul className="space-y-4">
+    <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {msg && <p className="text-sm text-good">{msg}</p>}
       {sorted.map((o: Outfit) => {
         const its = o.pieces.map((p) => byId.get(p.itemId)).filter((x): x is Item => !!x);

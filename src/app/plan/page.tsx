@@ -57,7 +57,7 @@ export default function PlanPage() {
 
       <section>
         <h2 className="label mb-3 text-muted">This week</h2>
-        <div className="no-scrollbar -mx-4 flex gap-2.5 overflow-x-auto px-4 pb-1">
+        <div className="no-scrollbar -mx-4 flex gap-2.5 overflow-x-auto px-4 pb-1 md:-mx-8 md:px-8 lg:mx-0 lg:grid lg:grid-cols-7 lg:overflow-visible lg:px-0">
           {week.map((d) => {
             const plan = planFor(d);
             const worn = wornOn(d);
@@ -65,7 +65,7 @@ export default function PlanPage() {
             const ids = worn?.itemIds ?? plan?.itemIds ?? [];
             const thumbs = ids.map((id) => byId.get(id)).filter((x): x is Item => !!x).slice(0, 4);
             return (
-              <button key={d} onClick={() => setDay(d)} className="w-[124px] shrink-0 rounded-card border border-line bg-card p-2.5 text-left">
+              <button key={d} onClick={() => setDay(d)} className="w-[124px] shrink-0 rounded-card border border-line bg-card p-2.5 text-left transition-colors duration-200 hover:border-edge lg:w-auto">
                 <p className="label text-muted">{d === start ? "Today" : label(d, { weekday: "short" })}</p>
                 <p className="display text-[22px]">{label(d, { day: "numeric" })}</p>
                 <p className="mt-0.5 h-4 text-[11px] text-muted">{f ? `${Math.round(f.tempMinC)}–${Math.round(f.tempMaxC)}° · ☔${f.precipProb}%` : ""}</p>
@@ -83,6 +83,7 @@ export default function PlanPage() {
         </div>
       </section>
 
+      <div className="space-y-8 lg:grid lg:grid-cols-2 lg:items-start lg:gap-10 lg:space-y-0">
       <History logs={logs} byId={byId} today={start} />
 
       <section>
@@ -117,6 +118,8 @@ export default function PlanPage() {
           </ul>
         )}
       </section>
+
+      </div>
 
       <Sheet open={!!day} onClose={() => setDay(undefined)} title={day ? label(day, { weekday: "long", day: "numeric", month: "long" }) : ""}>
         {day && <DayPlanner day={day} items={items} forecast={forecast.find((f) => f.date === day)} onDone={() => setDay(undefined)} />}

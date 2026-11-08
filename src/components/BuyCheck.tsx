@@ -182,8 +182,11 @@ export function BuyCheck() {
         <div className="flex justify-center">
           <Button size="sm" onClick={findBest} disabled={!!busy || items.length < 3}>Find my best buys</Button>
         </div>
-        {best && (
-          <ul className="grid grid-cols-2 gap-x-3 gap-y-5">
+        {best && best.length === 0 && (
+          <p className="text-center text-sm text-muted">Nice — your closet already covers everything in our catalogue. Check a specific piece above instead.</p>
+        )}
+        {best && best.length > 0 && (
+          <ul className="grid grid-cols-2 gap-x-3 gap-y-5 md:grid-cols-3 lg:grid-cols-6">
             {best.map(({ s, count }) => (
               <li key={s.key} className="text-center">
                 <button className="block w-full" onClick={() => setCand({ tags: { ...s }, src: s.src })}>

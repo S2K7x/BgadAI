@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- Link-preview (OpenGraph) / README banner, 1200x630. #raw=<dir> -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,400..900&family=Inter:wght@500;600&display=block" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { width: 1200px; height: 630px; overflow: hidden; background: #fff; font-family: Inter, sans-serif; color: #0b0b0b; position: relative; }
+  .abs { position: absolute; }
+  .wide { font-family: Anybody, sans-serif; font-stretch: 150%; font-weight: 800; text-transform: uppercase; line-height: 0.92; }
+  .label { font-size: 15px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #6d6d6d; }
+  .phone { position: absolute; background: #111; border-radius: 48px; box-shadow: 0 30px 60px rgb(0 0 0 / 0.22); }
+  .phone .screen { position: absolute; inset: 11px; border-radius: 38px; overflow: hidden; }
+  .phone img { width: 100%; display: block; }
+  .night { position: absolute; right: 0; top: 0; width: 330px; height: 630px; background: #0e0d10; }
+  .chip { display: inline-block; border: 2px solid #0b0b0b; padding: 8px 14px; font-size: 14px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-right: 8px; }
+</style>
+</head>
+<body>
+<div class="night"></div>
+<div class="abs label" style="left:64px;top:70px">Your AI stylist</div>
+<div class="abs wide" style="left:64px;top:118px;font-size:84px">BgadAI</div>
+<div class="abs wide" style="left:64px;top:240px;font-size:46px">Your closet,<br>styled by AI.</div>
+<div class="abs" style="left:64px;top:390px;width:520px;font-size:21px;line-height:1.45;color:#3d3d3d">Daily outfits from the clothes you own — for the weather, your plans and your taste.</div>
+<div class="abs" style="left:64px;top:500px"><span class="chip">Free</span><span class="chip">Private</span><span class="chip">Phone & desktop</span></div>
+<div id="phones"></div>
+<script>
+const P = Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
+const ph = (src, x, y, w, rot) => `<div class="phone" style="left:${x}px;top:${y}px;width:${w}px;height:${w * 2.06}px;transform:rotate(${rot}deg)"><div class="screen"><img src="file://${P.raw}/${src}.png"></div></div>`;
+document.getElementById("phones").innerHTML = ph("light-m-today", 660, 70, 250, -5) + ph("dark-m-today", 900, 120, 250, 5);
+window.ready = Promise.all([document.fonts.ready, ...[...document.images].map((i) => i.decode().catch(() => {}))]);
+</script>
+</body>
+</html>

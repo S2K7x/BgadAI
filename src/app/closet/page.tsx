@@ -142,7 +142,7 @@ export default function ClosetPage() {
             </button>
           </div>
 
-          <ul className="mt-5 grid grid-cols-2 gap-x-3 gap-y-6">
+          <ul className="mt-5 grid grid-cols-2 gap-x-3 gap-y-6 md:grid-cols-3 md:gap-x-5 lg:grid-cols-4 xl:grid-cols-5">
             {visible.map((i) => (
               <li key={i.id} className="cv-auto">
                 <button

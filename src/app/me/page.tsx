@@ -26,15 +26,17 @@ export default function MePage() {
   const styles = topStyles(profile.styleWeights, 3);
 
   return (
-    <div className="space-y-6">
-      <PageHeader title="Me" accent="Your style, your rules." />
-      <Stats
-        items={[
-          { value: items.length, label: "Pieces" },
-          { value: outfits ?? 0, label: "Outfits" },
-          { value: logs ?? 0, label: "Days logged" },
-        ]}
-      />
+    <div className="[&>*]:mb-6 lg:columns-2 lg:gap-6 [&>*]:break-inside-avoid">
+      <div className="[column-span:all]"><PageHeader title="Me" accent="Your style, your rules." /></div>
+      <div className="[column-span:all]">
+        <Stats
+          items={[
+            { value: items.length, label: "Pieces" },
+            { value: outfits ?? 0, label: "Outfits" },
+            { value: logs ?? 0, label: "Days logged" },
+          ]}
+        />
+      </div>
 
       <Habits />
 
@@ -126,7 +128,7 @@ export default function MePage() {
 
       <DataSettings />
 
-      <footer className="hero relative pt-10 pb-4 text-center">
+      <footer className="hero relative pt-10 pb-4 text-center [column-span:all]">
         <div className="flex justify-between">
           <span className="label text-muted">Wear more</span>
           <span className="label text-muted">Buy less</span>
