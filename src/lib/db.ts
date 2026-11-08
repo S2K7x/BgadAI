@@ -134,3 +134,43 @@ export async function importAll(file: File) {
 export async function wipeAll() {
   await Promise.all([db.items.clear(), db.outfits.clear(), db.wearLogs.clear(), db.feedback.clear(), db.inspirations.clear(), db.profile.clear()]);
 }
+
+/** Add the bundled real-photo sample closet (skips pieces already added). Returns how many were added. */
+export async function loadSampleCloset(wardrobe: "womenswear" | "menswear" | "both"): Promise<number> {
+  const { sampleCloset } = await import("./samples");
+  const have = new Set((await db.items.toArray()).map((i) => i.sample).filter(Boolean));
+  const picks = sampleCloset(wardrobe).filter((s) => !have.has(s.key));
+  const now = Date.now();
+  const items: Item[] = await Promise.all(
+    picks.map(async (s, i) => {
+      const blob = await (await fetch(s.src)).blob();
+      return {
+        id: uid(),
+        createdAt: now - i, // keep catalogue order (tops first) in the newest-first closet
+        name: s.name,
+        category: s.category,
+        subcategory: s.subcategory,
+        colors: s.colors,
+        pattern: s.pattern,
+        formality: s.formality,
+        warmth: s.warmth,
+        seasons: s.seasons,
+        styles: s.styles,
+        image: blob,
+        thumb: blob, // already a small 600x800 webp
+        status: "active" as const,
+        wearCount: 0,
+        sample: s.key,
+      };
+    }),
+  );
+  await db.items.bulkAdd(items);
+  return items.length;
+}
+
+/** Remove every sample piece (and keeps the user's own clothes). */
+export async function removeSampleCloset() {
+  const ids = (await db.items.toArray()).filter((i) => i.sample).map((i) => i.id);
+  await db.items.bulkDelete(ids);
+  return ids.length;
+}

@@ -7,7 +7,8 @@ import { ItemImage } from "@/components/ItemImage";
 import { Button, Card, Chip, ColorPicker, PageHeader, Spinner, Stats } from "@/components/ui";
 import { useTheme, type ThemePref } from "@/hooks/theme";
 import { useAiStatus, useItems, useProfile } from "@/hooks/data";
-import { db, exportAll, importAll, saveProfile, wipeAll } from "@/lib/db";
+import { db, exportAll, importAll, removeSampleCloset, saveProfile, wipeAll } from "@/lib/db";
+import { SampleClosetButton } from "@/components/SampleClosetButton";
 import { verifyBackgroundRemoval } from "@/lib/image";
 import { topStyles } from "@/lib/style";
 import { CATEGORY_LABELS, COLORS, COLOR_NAMES, OCCASIONS, OCCASION_INFO, STYLE_INFO, type ColorName } from "@/lib/taxonomy";
@@ -370,6 +371,16 @@ function DataSettings() {
           e.target.value = "";
         }}
       />
+      <div className="grid grid-cols-2 gap-2">
+        <SampleClosetButton label="Add sample closet" className="h-9 px-3.5 text-[11px]" />
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={async () => setMsg(`Removed ${await removeSampleCloset()} sample pieces`)}
+        >
+          Remove samples
+        </Button>
+      </div>
       <Button
         variant="danger"
         size="sm"

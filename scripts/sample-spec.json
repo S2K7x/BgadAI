@@ -1,0 +1,1063 @@
+[
+ {
+  "key": "tee-white",
+  "sub": "t-shirt",
+  "color": "white",
+  "article": "Tshirts",
+  "colors": [
+   "White"
+  ],
+  "nameLike": null,
+  "gender": "m",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "minimal",
+   "classic"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "tee-black",
+  "sub": "t-shirt",
+  "color": "black",
+  "article": "Tshirts",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": null,
+  "gender": "w",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "minimal",
+   "edgy"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "tee-grey",
+  "sub": "t-shirt",
+  "color": "grey",
+  "article": "Tshirts",
+  "colors": [
+   "Grey",
+   "Grey Melange",
+   "Charcoal"
+  ],
+  "nameLike": "%grey%",
+  "gender": "m",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "minimal",
+   "streetwear"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "shirt-lightblue",
+  "sub": "shirt",
+  "color": "light-blue",
+  "article": "Shirts",
+  "colors": [
+   "Blue"
+  ],
+  "nameLike": "%formal%",
+  "gender": "m",
+  "formality": 4,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "preppy"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "shirt-white",
+  "sub": "shirt",
+  "color": "white",
+  "article": "Shirts",
+  "colors": [
+   "White"
+  ],
+  "nameLike": null,
+  "gender": "w",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "minimal"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "shirt-burgundy",
+  "sub": "shirt",
+  "color": "burgundy",
+  "article": "Shirts",
+  "colors": [
+   "Maroon"
+  ],
+  "nameLike": null,
+  "gender": "m",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "edgy",
+   "classic"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "blouse-pink",
+  "sub": "blouse",
+  "color": "pink",
+  "article": "Tops",
+  "colors": [
+   "Pink"
+  ],
+  "nameLike": null,
+  "gender": "w",
+  "formality": 3,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "romantic"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "polo-green",
+  "sub": "polo",
+  "color": "green",
+  "article": "Tshirts",
+  "colors": [
+   "Green"
+  ],
+  "nameLike": "%polo%",
+  "gender": "m",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "preppy",
+   "sporty"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "tank-black",
+  "sub": "tank",
+  "color": "black",
+  "article": "Tops",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": "%tank%",
+  "gender": "w",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "summer"
+  ],
+  "styles": [
+   "sporty",
+   "minimal"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "sweater-navy",
+  "sub": "sweater",
+  "color": "navy",
+  "article": "Sweaters",
+  "colors": [
+   "Navy Blue"
+  ],
+  "nameLike": "%sweater%",
+  "gender": "m",
+  "formality": 3,
+  "warmth": 4,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "preppy"
+  ],
+  "pattern": "solid",
+  "exclude": [
+   "vest",
+   "sleeveless"
+  ]
+ },
+ {
+  "key": "sweater-beige",
+  "sub": "sweater",
+  "color": "beige",
+  "article": "Sweaters",
+  "colors": [
+   "Beige",
+   "Cream",
+   "Off White"
+  ],
+  "nameLike": null,
+  "gender": "w",
+  "formality": 3,
+  "warmth": 4,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "minimal",
+   "classic"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "hoodie-grey",
+  "sub": "hoodie",
+  "color": "grey",
+  "article": "Sweatshirts",
+  "colors": [
+   "Grey",
+   "Grey Melange"
+  ],
+  "nameLike": "%hood%",
+  "gender": "m",
+  "formality": 1,
+  "warmth": 3,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "streetwear",
+   "sporty"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "sweatshirt-green",
+  "sub": "sweatshirt",
+  "color": "green",
+  "article": "Sweatshirts",
+  "colors": [
+   "Green",
+   "Olive"
+  ],
+  "nameLike": null,
+  "gender": "m",
+  "formality": 1,
+  "warmth": 3,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "streetwear"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "cardigan-cream",
+  "sub": "cardigan",
+  "color": "cream",
+  "article": "Sweaters",
+  "colors": [
+   "Cream",
+   "Off White",
+   "Beige",
+   "White"
+  ],
+  "nameLike": "%cardigan%",
+  "gender": "w",
+  "formality": 2,
+  "warmth": 3,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "romantic",
+   "preppy"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "jeans-blue",
+  "sub": "jeans",
+  "color": "denim",
+  "article": "Jeans",
+  "colors": [
+   "Blue"
+  ],
+  "nameLike": null,
+  "gender": "m",
+  "formality": 2,
+  "warmth": 3,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "streetwear"
+  ],
+  "pattern": "solid",
+  "exclude": [
+   "capri",
+   "kid",
+   "boy"
+  ]
+ },
+ {
+  "key": "jeans-black",
+  "sub": "jeans",
+  "color": "black",
+  "article": "Jeans",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": null,
+  "gender": "w",
+  "formality": 2,
+  "warmth": 3,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "edgy",
+   "minimal"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "trousers-black",
+  "sub": "trousers",
+  "color": "black",
+  "article": "Trousers",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": null,
+  "gender": "w",
+  "formality": 4,
+  "warmth": 3,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "minimal",
+   "classic"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "chinos-beige",
+  "sub": "chinos",
+  "color": "beige",
+  "article": "Trousers",
+  "colors": [
+   "Beige",
+   "Khaki"
+  ],
+  "nameLike": null,
+  "gender": "m",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "preppy",
+   "classic"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "shorts-khaki",
+  "sub": "shorts",
+  "color": "khaki",
+  "article": "Shorts",
+  "colors": [
+   "Khaki",
+   "Beige"
+  ],
+  "nameLike": null,
+  "gender": "m",
+  "formality": 1,
+  "warmth": 1,
+  "seasons": [
+   "summer"
+  ],
+  "styles": [
+   "preppy",
+   "sporty"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "skirt-black",
+  "sub": "skirt",
+  "color": "black",
+  "article": "Skirts",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": null,
+  "gender": "w",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "edgy",
+   "romantic"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "joggers-black",
+  "sub": "joggers",
+  "color": "black",
+  "article": "Track Pants",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": null,
+  "gender": "m",
+  "formality": 1,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "sporty",
+   "streetwear"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "leggings-black",
+  "sub": "leggings",
+  "color": "black",
+  "article": "Leggings",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": null,
+  "gender": "w",
+  "formality": 1,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "sporty"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "dress-black",
+  "sub": "dress",
+  "color": "black",
+  "article": "Dresses",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": "%dress%",
+  "gender": "w",
+  "formality": 4,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "classic",
+   "romantic"
+  ],
+  "pattern": "solid",
+  "exclude": [
+   "girl",
+   "kid",
+   "top",
+   "skirt"
+  ]
+ },
+ {
+  "key": "dress-blue",
+  "sub": "dress",
+  "color": "light-blue",
+  "article": "Dresses",
+  "colors": [
+   "Blue"
+  ],
+  "nameLike": "%dress%",
+  "gender": "w",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "summer"
+  ],
+  "styles": [
+   "romantic",
+   "boho"
+  ],
+  "pattern": "solid",
+  "exclude": [
+   "girl",
+   "kid"
+  ]
+ },
+ {
+  "key": "dress-print",
+  "sub": "dress",
+  "color": "orange",
+  "article": "Dresses",
+  "colors": [
+   "Orange",
+   "Multi",
+   "Red"
+  ],
+  "nameLike": "%print%",
+  "gender": "w",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "summer"
+  ],
+  "styles": [
+   "boho"
+  ],
+  "pattern": "print",
+  "exclude": [
+   "girl",
+   "kid"
+  ]
+ },
+ {
+  "key": "jumpsuit-black",
+  "sub": "jumpsuit",
+  "color": "black",
+  "article": "Jumpsuit",
+  "colors": [
+   "Black",
+   "Navy Blue"
+  ],
+  "nameLike": null,
+  "gender": "w",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "minimal"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "puffer-olive",
+  "sub": "puffer",
+  "color": "olive",
+  "article": "Jackets",
+  "colors": [
+   "Olive",
+   "Green"
+  ],
+  "nameLike": null,
+  "gender": "m",
+  "formality": 2,
+  "warmth": 5,
+  "seasons": [
+   "winter"
+  ],
+  "styles": [
+   "streetwear",
+   "sporty"
+  ],
+  "pattern": "solid",
+  "exclude": [
+   "padded",
+   "puffer"
+  ]
+ },
+ {
+  "key": "blazer-lightblue",
+  "sub": "blazer",
+  "color": "light-blue",
+  "article": "Blazers",
+  "colors": [
+   "Navy Blue",
+   "Blue",
+   "Black"
+  ],
+  "nameLike": null,
+  "gender": "u",
+  "formality": 4,
+  "warmth": 3,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "preppy"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "blazer-black",
+  "sub": "blazer",
+  "color": "black",
+  "article": "Blazers",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": null,
+  "gender": "w",
+  "formality": 4,
+  "warmth": 3,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "minimal",
+   "classic"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "jacket-brown",
+  "sub": "jacket",
+  "color": "brown",
+  "article": "Jackets",
+  "colors": [
+   "Brown",
+   "Coffee Brown"
+  ],
+  "nameLike": null,
+  "gender": "u",
+  "formality": 3,
+  "warmth": 4,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "edgy"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "sneakers-white",
+  "sub": "sneakers",
+  "color": "white",
+  "article": "Casual Shoes",
+  "colors": [
+   "White"
+  ],
+  "nameLike": null,
+  "gender": "u",
+  "formality": 2,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "minimal",
+   "streetwear"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "sneakers-black",
+  "sub": "sneakers",
+  "color": "black",
+  "article": "Sports Shoes",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": null,
+  "gender": "u",
+  "formality": 1,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "sporty"
+  ],
+  "pattern": "solid",
+  "exclude": [
+   "football",
+   "stud",
+   "cleat"
+  ]
+ },
+ {
+  "key": "boots-brown",
+  "sub": "boots",
+  "color": "brown",
+  "article": "Casual Shoes",
+  "colors": [
+   "Brown"
+  ],
+  "nameLike": "%boot%",
+  "gender": "u",
+  "formality": 3,
+  "warmth": 4,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "edgy",
+   "boho"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "loafers-brown",
+  "sub": "loafers",
+  "color": "brown",
+  "article": "Casual Shoes",
+  "colors": [
+   "Brown",
+   "Tan"
+  ],
+  "nameLike": "%loafer%",
+  "gender": "u",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "preppy"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "dress-shoes-black",
+  "sub": "dress-shoes",
+  "color": "black",
+  "article": "Formal Shoes",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": null,
+  "gender": "m",
+  "formality": 5,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "heels-black",
+  "sub": "heels",
+  "color": "black",
+  "article": "Heels",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": "%heel%",
+  "gender": "w",
+  "formality": 4,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "romantic"
+  ],
+  "pattern": "solid",
+  "exclude": [
+   "flat",
+   "sandal"
+  ]
+ },
+ {
+  "key": "sandals-brown",
+  "sub": "sandals",
+  "color": "brown",
+  "article": "Sandals",
+  "colors": [
+   "Brown",
+   "Tan"
+  ],
+  "nameLike": null,
+  "gender": "u",
+  "formality": 1,
+  "warmth": 1,
+  "seasons": [
+   "summer"
+  ],
+  "styles": [
+   "boho"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "tote-black",
+  "sub": "tote",
+  "color": "black",
+  "article": "Handbags",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": null,
+  "gender": "w",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "minimal",
+   "classic"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "backpack-black",
+  "sub": "backpack",
+  "color": "black",
+  "article": "Backpacks",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": null,
+  "gender": "u",
+  "formality": 1,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "sporty",
+   "streetwear"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "cap-black",
+  "sub": "cap",
+  "color": "black",
+  "article": "Caps",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": null,
+  "gender": "u",
+  "formality": 1,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "streetwear",
+   "sporty"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "belt-brown",
+  "sub": "belt",
+  "color": "brown",
+  "article": "Belts",
+  "colors": [
+   "Brown",
+   "Tan"
+  ],
+  "nameLike": null,
+  "gender": "u",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "sunglasses-black",
+  "sub": "sunglasses",
+  "color": "black",
+  "article": "Sunglasses",
+  "colors": [
+   "Black"
+  ],
+  "nameLike": null,
+  "gender": "u",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "summer"
+  ],
+  "styles": [
+   "edgy",
+   "classic"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "watch-metallic",
+  "sub": "watch",
+  "color": "metallic",
+  "article": "Watches",
+  "colors": [
+   "Silver",
+   "Gold",
+   "Steel"
+  ],
+  "nameLike": null,
+  "gender": "u",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic"
+  ],
+  "pattern": "solid"
+ },
+ {
+  "key": "scarf-grey",
+  "sub": "scarf",
+  "color": "grey",
+  "article": "Scarves",
+  "colors": [
+   "Grey",
+   "Grey Melange",
+   "Beige"
+  ],
+  "nameLike": null,
+  "gender": "u",
+  "formality": 2,
+  "warmth": 3,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "boho",
+   "classic"
+  ],
+  "pattern": "solid"
+ }
+]

@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
-import { Garment } from "@/components/Garment";
+import { PieceImage } from "@/components/PieceImage";
 import { Hero } from "@/components/Hero";
 import { Button, Chip, ColorPicker, SectionTitle, Spinner } from "@/components/ui";
 import { saveProfile } from "@/lib/db";
@@ -350,9 +350,9 @@ function SwipeDeck({ looks, onDone }: { looks: Look[]; onDone: (s: { look: Look;
 function LookCard({ look, className = "" }: { look: Look; className?: string }) {
   return (
     <div className={`absolute inset-0 flex flex-col rounded-card border border-line bg-card p-5 shadow-sm ${className}`}>
-      <div className="cutout-bg grid flex-1 grid-cols-2 place-items-center gap-1 rounded-tile p-3">
+      <div className="cutout-bg grid min-h-0 flex-1 grid-cols-2 place-content-center place-items-center gap-1 overflow-hidden rounded-tile p-2">
         {look.pieces.map((p, i) => (
-          <Garment key={i} sub={p.sub} color={p.color} className={look.pieces.length === 3 && i === 0 ? "col-span-2 h-28 w-28" : "h-24 w-24"} />
+          <PieceImage key={i} eager sub={p.sub} color={p.color} className="h-[132px] w-[100px]" />
         ))}
       </div>
       <p className="mt-4 text-[17px] leading-snug font-medium">{look.title}</p>

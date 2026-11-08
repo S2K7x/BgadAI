@@ -155,3 +155,16 @@ describe("style profile", () => {
     expect(w.boho).toBe(0);
   });
 });
+
+describe("sample photos", () => {
+  it("finds the closest real photo for a type and colour", async () => {
+    const { findSample, sampleCloset, SAMPLES } = await import("../samples");
+    expect(SAMPLES.length).toBeGreaterThan(30);
+    expect(findSample("t-shirt", "white")?.key).toBe("tee-white");
+    expect(findSample("trousers", "navy")?.subcategory).toBe("trousers");
+    expect(findSample("hat", "beige")?.category).toBe("accessory"); // no hat photo → nearest accessory
+    const women = sampleCloset("womenswear");
+    expect(women.every((s) => s.gender !== "m")).toBe(true);
+    expect(new Set(women.map((s) => s.category))).toEqual(expect.objectContaining({ size: expect.any(Number) }));
+  });
+});

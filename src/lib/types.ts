@@ -25,6 +25,8 @@ export type Item = ItemTags & {
   status: "active" | "laundry" | "archived";
   wearCount: number;
   lastWornAt?: number;
+  /** Set for pieces loaded from the bundled sample closet. */
+  sample?: string;
 };
 
 export type OutfitPiece = { slot: Slot; itemId: string };

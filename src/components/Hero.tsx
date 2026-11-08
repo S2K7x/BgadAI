@@ -1,5 +1,5 @@
 "use client";
-import { Garment } from "./Garment";
+import { PieceImage } from "./PieceImage";
 import { ItemImage } from "./ItemImage";
 import { Asterisk } from "./ui";
 import type { ColorName } from "@/lib/taxonomy";
@@ -53,7 +53,7 @@ export function Hero({
                 <ItemImage blob={vis.blob} alt={vis.alt} className="h-[200px] w-[150px] dark:bg-transparent" />
               ) : (
                 <div className="cutout-bg tile grid h-[190px] w-[150px] place-items-center dark:bg-transparent">
-                  <Garment sub={vis.sub} color={vis.color} className="h-[150px] w-[150px]" />
+                  <PieceImage eager sub={vis.sub} color={vis.color} className="h-[180px] w-[135px]" />
                 </div>
               )}
             </div>

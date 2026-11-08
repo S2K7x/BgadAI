@@ -355,3 +355,20 @@ body {
 .hero-shadow {
   filter: drop-shadow(0 18px 24px rgb(0 0 0 / 0.18));
 }
+
+/* Product photos are shot on white: in Editorial, multiply them onto the tile so the white
+   disappears and pieces read as cut-outs. In Synth they sit on their own light card. */
+.product-photo,
+.tile img {
+  mix-blend-mode: multiply;
+}
+:root[data-theme="dark"] .product-photo,
+:root[data-theme="dark"] .tile img {
+  mix-blend-mode: normal;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .product-photo,
+  :root:not([data-theme="light"]) .tile img {
+    mix-blend-mode: normal;
+  }
+}

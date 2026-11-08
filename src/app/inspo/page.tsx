@@ -1,7 +1,7 @@
 "use client";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useMemo, useRef, useState } from "react";
-import { Garment } from "@/components/Garment";
+import { PieceImage } from "@/components/PieceImage";
 import { ItemImage } from "@/components/ItemImage";
 import { Button, Card, Chip, ColorPicker, Empty, PageHeader, Sheet, Spinner } from "@/components/ui";
 import { toEngine, useAiStatus, useItems, useProfile } from "@/hooks/data";
@@ -180,7 +180,7 @@ function MatchRow({ m, byId, onShop, onRemove }: { m: GarmentMatch; byId: Map<st
   return (
     <li className="flex items-center gap-3 rounded-card border border-line bg-card p-2.5">
       <div className="cutout-bg grid h-16 w-16 shrink-0 place-items-center rounded-tile">
-        <Garment sub={m.garment.subcategory} color={m.garment.colors[0] ?? "grey"} className="h-12 w-12" />
+        <PieceImage sub={m.garment.subcategory} color={m.garment.colors[0] ?? "grey"} className="h-14 w-12" />
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{m.garment.description || m.garment.subcategory}</p>

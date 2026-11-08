@@ -94,6 +94,23 @@ test cut-out, and switches itself back off with an explanation if the device can
 Photos then keep their background (a plain wall or bedsheet behind clothes works well). A
 server-side option (e.g. `rembg` / BiRefNet in a Python worker) is on the roadmap.
 
+## Sample photos
+
+The style quiz, heroes, missing-piece thumbnails and the one-tap **"Try a sample closet"** use
+~50 real product photos (MIT-licensed "Fashion Product Images" dataset) bundled in
+`public/samples`. Regenerate or change them by editing `scripts/sample-spec.json` and running:
+
+```bash
+pip install duckdb pillow
+```
+
+```bash
+python3 scripts/fetch_samples.py
+```
+
+DuckDB reads the dataset's Parquet files over HTTP with range requests, so only the tag columns
+and the chosen images are downloaded (not the 12 GB dataset). See `public/samples/ATTRIBUTION.md`.
+
 ## Project layout
 
 ```

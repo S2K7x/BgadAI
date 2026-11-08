@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { ItemImage } from "@/components/ItemImage";
+import { SampleClosetButton } from "@/components/SampleClosetButton";
 import { TagEditor } from "@/components/TagEditor";
 import { Button, Chip, Empty, PageHeader, Sheet, Spinner, Stats, Swatch } from "@/components/ui";
 import { useItems } from "@/hooks/data";
@@ -74,6 +75,7 @@ export default function ClosetPage() {
           <Link href="/closet/add?quick=1">
             <Button className="mt-4">Quick start</Button>
           </Link>
+          <SampleClosetButton className="mt-2" />
         </Empty>
       ) : (
         <>

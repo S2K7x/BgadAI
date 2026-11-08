@@ -1,0 +1,1222 @@
+[
+ {
+  "key": "tee-white",
+  "src": "/samples/tee-white.webp",
+  "name": "White T-shirt",
+  "category": "top",
+  "subcategory": "t-shirt",
+  "colors": [
+   "white"
+  ],
+  "pattern": "solid",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "minimal",
+   "classic"
+  ],
+  "gender": "m",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 1575,
+   "title": "Kipsta Men Sports White T-shirt"
+  }
+ },
+ {
+  "key": "tee-black",
+  "src": "/samples/tee-black.webp",
+  "name": "Black T-shirt",
+  "category": "top",
+  "subcategory": "t-shirt",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "minimal",
+   "edgy"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 1570,
+   "title": "Artengo Women Tennis Singlet"
+  }
+ },
+ {
+  "key": "tee-grey",
+  "src": "/samples/tee-grey.webp",
+  "name": "Grey T-shirt",
+  "category": "top",
+  "subcategory": "t-shirt",
+  "colors": [
+   "grey"
+  ],
+  "pattern": "solid",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "minimal",
+   "streetwear"
+  ],
+  "gender": "m",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 1531,
+   "title": "Puma Men Grey Solid Round Neck T-Shirt"
+  }
+ },
+ {
+  "key": "shirt-lightblue",
+  "src": "/samples/shirt-lightblue.webp",
+  "name": "Light blue shirt",
+  "category": "top",
+  "subcategory": "shirt",
+  "colors": [
+   "light-blue"
+  ],
+  "pattern": "solid",
+  "formality": 4,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "preppy"
+  ],
+  "gender": "m",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 12244,
+   "title": "Genesis Blue Striped Formal Shirt"
+  }
+ },
+ {
+  "key": "shirt-white",
+  "src": "/samples/shirt-white.webp",
+  "name": "White shirt",
+  "category": "top",
+  "subcategory": "shirt",
+  "colors": [
+   "white"
+  ],
+  "pattern": "solid",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "minimal"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 2125,
+   "title": "Lee Women White Shirt"
+  }
+ },
+ {
+  "key": "shirt-burgundy",
+  "src": "/samples/shirt-burgundy.webp",
+  "name": "Burgundy shirt",
+  "category": "top",
+  "subcategory": "shirt",
+  "colors": [
+   "burgundy"
+  ],
+  "pattern": "solid",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "edgy",
+   "classic"
+  ],
+  "gender": "m",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 8781,
+   "title": "Indigo Nation Men Bling Technification Purple Shirts"
+  }
+ },
+ {
+  "key": "blouse-pink",
+  "src": "/samples/blouse-pink.webp",
+  "name": "Pink blouse",
+  "category": "top",
+  "subcategory": "blouse",
+  "colors": [
+   "pink"
+  ],
+  "pattern": "solid",
+  "formality": 3,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "romantic"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 3956,
+   "title": "Jealous 21 Women Pink Clever Disguise Top"
+  }
+ },
+ {
+  "key": "polo-green",
+  "src": "/samples/polo-green.webp",
+  "name": "Green polo",
+  "category": "top",
+  "subcategory": "polo",
+  "colors": [
+   "green"
+  ],
+  "pattern": "solid",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "preppy",
+   "sporty"
+  ],
+  "gender": "m",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 1946,
+   "title": "Puma Mens One Love Reggae Polo T-shirt"
+  }
+ },
+ {
+  "key": "tank-black",
+  "src": "/samples/tank-black.webp",
+  "name": "Black tank",
+  "category": "top",
+  "subcategory": "tank",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "summer"
+  ],
+  "styles": [
+   "sporty",
+   "minimal"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 2564,
+   "title": "Domyos Women Black Tank Top"
+  }
+ },
+ {
+  "key": "sweater-navy",
+  "src": "/samples/sweater-navy.webp",
+  "name": "Navy sweater",
+  "category": "top",
+  "subcategory": "sweater",
+  "colors": [
+   "navy"
+  ],
+  "pattern": "solid",
+  "formality": 3,
+  "warmth": 4,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "preppy"
+  ],
+  "gender": "m",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 9874,
+   "title": "Spykar Men Rts Style Live Ride Navy Blue Sweaters"
+  }
+ },
+ {
+  "key": "sweater-beige",
+  "src": "/samples/sweater-beige.webp",
+  "name": "Beige sweater",
+  "category": "top",
+  "subcategory": "sweater",
+  "colors": [
+   "beige"
+  ],
+  "pattern": "solid",
+  "formality": 3,
+  "warmth": 4,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "minimal",
+   "classic"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 32388,
+   "title": "Arrow Woman Beige Cardigan"
+  }
+ },
+ {
+  "key": "hoodie-grey",
+  "src": "/samples/hoodie-grey.webp",
+  "name": "Grey hoodie",
+  "category": "top",
+  "subcategory": "hoodie",
+  "colors": [
+   "grey"
+  ],
+  "pattern": "solid",
+  "formality": 1,
+  "warmth": 3,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "streetwear",
+   "sporty"
+  ],
+  "gender": "m",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 9684,
+   "title": "ADIDAS Men Cress Logohood Grey Sweatshirts"
+  }
+ },
+ {
+  "key": "sweatshirt-green",
+  "src": "/samples/sweatshirt-green.webp",
+  "name": "Green sweatshirt",
+  "category": "top",
+  "subcategory": "sweatshirt",
+  "colors": [
+   "green"
+  ],
+  "pattern": "solid",
+  "formality": 1,
+  "warmth": 3,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "streetwear"
+  ],
+  "gender": "m",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 11530,
+   "title": "United Colors of Benetton Men Light Winter Green Sweatshirts"
+  }
+ },
+ {
+  "key": "cardigan-cream",
+  "src": "/samples/cardigan-cream.webp",
+  "name": "Cream cardigan",
+  "category": "top",
+  "subcategory": "cardigan",
+  "colors": [
+   "cream"
+  ],
+  "pattern": "solid",
+  "formality": 2,
+  "warmth": 3,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "romantic",
+   "preppy"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 11093,
+   "title": "Scullers Women Knit White Sweaters"
+  }
+ },
+ {
+  "key": "jeans-blue",
+  "src": "/samples/jeans-blue.webp",
+  "name": "Denim jeans",
+  "category": "bottom",
+  "subcategory": "jeans",
+  "colors": [
+   "denim"
+  ],
+  "pattern": "solid",
+  "formality": 2,
+  "warmth": 3,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "streetwear"
+  ],
+  "gender": "m",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 9161,
+   "title": "Locomotive Men Cairo Blue Jeans"
+  }
+ },
+ {
+  "key": "jeans-black",
+  "src": "/samples/jeans-black.webp",
+  "name": "Black jeans",
+  "category": "bottom",
+  "subcategory": "jeans",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 2,
+  "warmth": 3,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "edgy",
+   "minimal"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 5766,
+   "title": "Jealous 21 Women Black Jegging"
+  }
+ },
+ {
+  "key": "trousers-black",
+  "src": "/samples/trousers-black.webp",
+  "name": "Black trousers",
+  "category": "bottom",
+  "subcategory": "trousers",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 4,
+  "warmth": 3,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "minimal",
+   "classic"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 6896,
+   "title": "Forever New Women Black Trouser"
+  }
+ },
+ {
+  "key": "chinos-beige",
+  "src": "/samples/chinos-beige.webp",
+  "name": "Beige chinos",
+  "category": "bottom",
+  "subcategory": "chinos",
+  "colors": [
+   "beige"
+  ],
+  "pattern": "solid",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "preppy",
+   "classic"
+  ],
+  "gender": "m",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 8838,
+   "title": "Scullers Men Scul Beige Trousers"
+  }
+ },
+ {
+  "key": "shorts-khaki",
+  "src": "/samples/shorts-khaki.webp",
+  "name": "Khaki shorts",
+  "category": "bottom",
+  "subcategory": "shorts",
+  "colors": [
+   "khaki"
+  ],
+  "pattern": "solid",
+  "formality": 1,
+  "warmth": 1,
+  "seasons": [
+   "summer"
+  ],
+  "styles": [
+   "preppy",
+   "sporty"
+  ],
+  "gender": "m",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 13113,
+   "title": "ADIDAS Men HT Khakhi Short"
+  }
+ },
+ {
+  "key": "skirt-black",
+  "src": "/samples/skirt-black.webp",
+  "name": "Black skirt",
+  "category": "bottom",
+  "subcategory": "skirt",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "edgy",
+   "romantic"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 6857,
+   "title": "Forever New Women's Animal Stroke Print Black Skirt"
+  }
+ },
+ {
+  "key": "joggers-black",
+  "src": "/samples/joggers-black.webp",
+  "name": "Black joggers",
+  "category": "bottom",
+  "subcategory": "joggers",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 1,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "sporty",
+   "streetwear"
+  ],
+  "gender": "m",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 1572,
+   "title": "Kalenji Mens Essential Training Track Pants"
+  }
+ },
+ {
+  "key": "leggings-black",
+  "src": "/samples/leggings-black.webp",
+  "name": "Black leggings",
+  "category": "bottom",
+  "subcategory": "leggings",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 1,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "sporty"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 6866,
+   "title": "Forever New Women Black Leggings"
+  }
+ },
+ {
+  "key": "dress-black",
+  "src": "/samples/dress-black.webp",
+  "name": "Black dress",
+  "category": "onepiece",
+  "subcategory": "dress",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 4,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "classic",
+   "romantic"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 6868,
+   "title": "Forever New Women's Waterfall Sleeve Shift Black Dress"
+  }
+ },
+ {
+  "key": "dress-blue",
+  "src": "/samples/dress-blue.webp",
+  "name": "Light blue dress",
+  "category": "onepiece",
+  "subcategory": "dress",
+  "colors": [
+   "light-blue"
+  ],
+  "pattern": "solid",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "summer"
+  ],
+  "styles": [
+   "romantic",
+   "boho"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 8483,
+   "title": "Forever New Women Creme de Menthe Blue Dresses"
+  }
+ },
+ {
+  "key": "dress-print",
+  "src": "/samples/dress-print.webp",
+  "name": "Orange dress",
+  "category": "onepiece",
+  "subcategory": "dress",
+  "colors": [
+   "orange"
+  ],
+  "pattern": "print",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "summer"
+  ],
+  "styles": [
+   "boho"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 8500,
+   "title": "Forever New Women GeoPrint Multi Coloured Dress"
+  }
+ },
+ {
+  "key": "jumpsuit-black",
+  "src": "/samples/jumpsuit-black.webp",
+  "name": "Black jumpsuit",
+  "category": "onepiece",
+  "subcategory": "jumpsuit",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "minimal"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 43317,
+   "title": "United Colors of Benetton Women Black Jumpsuit"
+  }
+ },
+ {
+  "key": "puffer-olive",
+  "src": "/samples/puffer-olive.webp",
+  "name": "Olive puffer",
+  "category": "outerwear",
+  "subcategory": "puffer",
+  "colors": [
+   "olive"
+  ],
+  "pattern": "solid",
+  "formality": 2,
+  "warmth": 5,
+  "seasons": [
+   "winter"
+  ],
+  "styles": [
+   "streetwear",
+   "sporty"
+  ],
+  "gender": "m",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 18201,
+   "title": "Nike Men Casual Olive Jacket"
+  }
+ },
+ {
+  "key": "blazer-lightblue",
+  "src": "/samples/blazer-lightblue.webp",
+  "name": "Light blue blazer",
+  "category": "outerwear",
+  "subcategory": "blazer",
+  "colors": [
+   "light-blue"
+  ],
+  "pattern": "solid",
+  "formality": 4,
+  "warmth": 3,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "preppy"
+  ],
+  "gender": "u",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 31729,
+   "title": "Reid & Taylor Men Blue Blazer"
+  }
+ },
+ {
+  "key": "blazer-black",
+  "src": "/samples/blazer-black.webp",
+  "name": "Black blazer",
+  "category": "outerwear",
+  "subcategory": "blazer",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 4,
+  "warmth": 3,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "minimal",
+   "classic"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 27845,
+   "title": "Scullers For Her Black Blazer"
+  }
+ },
+ {
+  "key": "jacket-brown",
+  "src": "/samples/jacket-brown.webp",
+  "name": "Brown jacket",
+  "category": "outerwear",
+  "subcategory": "jacket",
+  "colors": [
+   "brown"
+  ],
+  "pattern": "solid",
+  "formality": 3,
+  "warmth": 4,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "edgy"
+  ],
+  "gender": "u",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 59127,
+   "title": "Just Natural Men Brown Jacket"
+  }
+ },
+ {
+  "key": "sneakers-white",
+  "src": "/samples/sneakers-white.webp",
+  "name": "White sneakers",
+  "category": "shoes",
+  "subcategory": "sneakers",
+  "colors": [
+   "white"
+  ],
+  "pattern": "solid",
+  "formality": 2,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "minimal",
+   "streetwear"
+  ],
+  "gender": "u",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 1544,
+   "title": "Puma Men's Basket Bump Sneaker"
+  }
+ },
+ {
+  "key": "sneakers-black",
+  "src": "/samples/sneakers-black.webp",
+  "name": "Black sneakers",
+  "category": "shoes",
+  "subcategory": "sneakers",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 1,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "sporty"
+  ],
+  "gender": "u",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 1730,
+   "title": "Reebok Women Black Pink Frisker Shoe"
+  }
+ },
+ {
+  "key": "boots-brown",
+  "src": "/samples/boots-brown.webp",
+  "name": "Brown boots",
+  "category": "shoes",
+  "subcategory": "boots",
+  "colors": [
+   "brown"
+  ],
+  "pattern": "solid",
+  "formality": 3,
+  "warmth": 4,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "edgy",
+   "boho"
+  ],
+  "gender": "u",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 4184,
+   "title": "Rockport Men D2N Desert Boot Dark Brown Shoe"
+  }
+ },
+ {
+  "key": "loafers-brown",
+  "src": "/samples/loafers-brown.webp",
+  "name": "Brown loafers",
+  "category": "shoes",
+  "subcategory": "loafers",
+  "colors": [
+   "brown"
+  ],
+  "pattern": "solid",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "preppy"
+  ],
+  "gender": "u",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 37957,
+   "title": "Clarks Men Brown Leather Loafers"
+  }
+ },
+ {
+  "key": "dress-shoes-black",
+  "src": "/samples/dress-shoes-black.webp",
+  "name": "Black dress shoes",
+  "category": "shoes",
+  "subcategory": "dress-shoes",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 5,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic"
+  ],
+  "gender": "m",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 2370,
+   "title": "Red Tape Men's Semi Black Formal Shoe"
+  }
+ },
+ {
+  "key": "heels-black",
+  "src": "/samples/heels-black.webp",
+  "name": "Black heels",
+  "category": "shoes",
+  "subcategory": "heels",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 4,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic",
+   "romantic"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 2874,
+   "title": "Catwalk Women Black Heels"
+  }
+ },
+ {
+  "key": "sandals-brown",
+  "src": "/samples/sandals-brown.webp",
+  "name": "Brown sandals",
+  "category": "shoes",
+  "subcategory": "sandals",
+  "colors": [
+   "brown"
+  ],
+  "pattern": "solid",
+  "formality": 1,
+  "warmth": 1,
+  "seasons": [
+   "summer"
+  ],
+  "styles": [
+   "boho"
+  ],
+  "gender": "u",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 1806,
+   "title": "Quechua Men Arpenaz Brown Sandal"
+  }
+ },
+ {
+  "key": "tote-black",
+  "src": "/samples/tote-black.webp",
+  "name": "Black tote",
+  "category": "bag",
+  "subcategory": "tote",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "minimal",
+   "classic"
+  ],
+  "gender": "w",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 1597,
+   "title": "Geonaute Women Black Outdoor Bag"
+  }
+ },
+ {
+  "key": "backpack-black",
+  "src": "/samples/backpack-black.webp",
+  "name": "Black backpack",
+  "category": "bag",
+  "subcategory": "backpack",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 1,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "sporty",
+   "streetwear"
+  ],
+  "gender": "u",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 1526,
+   "title": "Puma Big Cat Backpack Black"
+  }
+ },
+ {
+  "key": "cap-black",
+  "src": "/samples/cap-black.webp",
+  "name": "Black cap",
+  "category": "accessory",
+  "subcategory": "cap",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 1,
+  "warmth": 1,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn"
+  ],
+  "styles": [
+   "streetwear",
+   "sporty"
+  ],
+  "gender": "u",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 1535,
+   "title": "Puma Unisex Logo Cap"
+  }
+ },
+ {
+  "key": "belt-brown",
+  "src": "/samples/belt-brown.webp",
+  "name": "Brown belt",
+  "category": "accessory",
+  "subcategory": "belt",
+  "colors": [
+   "brown"
+  ],
+  "pattern": "solid",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic"
+  ],
+  "gender": "u",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 7624,
+   "title": "Wrangler Men Dusky Rose Leather Belt"
+  }
+ },
+ {
+  "key": "sunglasses-black",
+  "src": "/samples/sunglasses-black.webp",
+  "name": "Black sunglasses",
+  "category": "accessory",
+  "subcategory": "sunglasses",
+  "colors": [
+   "black"
+  ],
+  "pattern": "solid",
+  "formality": 2,
+  "warmth": 1,
+  "seasons": [
+   "summer"
+  ],
+  "styles": [
+   "edgy",
+   "classic"
+  ],
+  "gender": "u",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 8617,
+   "title": "Fastrack Unisex Aviator Black Sunglasses"
+  }
+ },
+ {
+  "key": "watch-metallic",
+  "src": "/samples/watch-metallic.webp",
+  "name": "Silver watch",
+  "category": "accessory",
+  "subcategory": "watch",
+  "colors": [
+   "metallic"
+  ],
+  "pattern": "solid",
+  "formality": 3,
+  "warmth": 2,
+  "seasons": [
+   "spring",
+   "summer",
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "classic"
+  ],
+  "gender": "u",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 10133,
+   "title": "Esprit Women Rough Chic Black Silver Watches"
+  }
+ },
+ {
+  "key": "scarf-grey",
+  "src": "/samples/scarf-grey.webp",
+  "name": "Grey scarf",
+  "category": "accessory",
+  "subcategory": "scarf",
+  "colors": [
+   "grey"
+  ],
+  "pattern": "solid",
+  "formality": 2,
+  "warmth": 3,
+  "seasons": [
+   "autumn",
+   "winter"
+  ],
+  "styles": [
+   "boho",
+   "classic"
+  ],
+  "gender": "u",
+  "source": {
+   "dataset": "PestoRosso/lamoda-fashion-product-images",
+   "id": 14631,
+   "title": "United Colors of Benetton Women Printed Grey Scarves"
+  }
+ }
+]

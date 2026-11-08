@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useMemo, useState } from "react";
 import { ItemImage } from "@/components/ItemImage";
 import { OutfitBoard } from "@/components/OutfitBoard";
+import { SampleClosetButton } from "@/components/SampleClosetButton";
 import { Hero, type HeroVisual } from "@/components/Hero";
 import { Button, Chip, Empty, Meter, SectionTitle, Sheet, Spinner } from "@/components/ui";
 import { toEngine, useAiStatus, useItems, useProfile, useWeather } from "@/hooks/data";
@@ -188,6 +189,7 @@ function Today() {
             <Link href={`/closet/add${items.length < 5 ? "?quick=1" : ""}`}>
               <Button className="mt-4">Add clothes</Button>
             </Link>
+            {items.length === 0 && <SampleClosetButton className="mt-2" />}
           </Empty>
         </div>
       ) : (
