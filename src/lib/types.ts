@@ -25,6 +25,8 @@ export type Item = ItemTags & {
   status: "active" | "laundry" | "archived";
   wearCount: number;
   lastWornAt?: number;
+  /** When the item went into the laundry (auto-returns after the profile's laundryDays). */
+  laundryAt?: number;
   /** Set for pieces loaded from the bundled sample closet. */
   sample?: string;
 };
@@ -68,6 +70,8 @@ export type StyleProfile = {
   favoriteColors: ColorName[];
   avoidColors: ColorName[];
   backgroundRemoval: boolean;
+  /** Days after which laundry returns to the closet automatically (0 = never). */
+  laundryDays: number;
 };
 
 export type DetectedGarment = {

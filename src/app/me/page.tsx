@@ -94,6 +94,16 @@ export default function MePage() {
           <p className="mb-2 text-sm font-medium">Colours to avoid</p>
           <ColorPicker value={profile.avoidColors} onChange={(c) => saveProfile({ avoidColors: c })} max={8} />
         </div>
+        <div>
+          <p className="mb-2 text-sm font-medium">Laundry comes back after</p>
+          <div className="flex flex-wrap gap-2">
+            {[1, 3, 7, 0].map((d) => (
+              <Chip key={d} selected={(profile.laundryDays ?? 3) === d} onClick={() => saveProfile({ laundryDays: d })}>
+                {d === 0 ? "Never (manual)" : `${d} day${d > 1 ? "s" : ""}`}
+              </Chip>
+            ))}
+          </div>
+        </div>
       </Card>
 
       <Card className="space-y-4">

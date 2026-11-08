@@ -5,14 +5,15 @@ import { ItemImage } from "@/components/ItemImage";
 import { OutfitBoard } from "@/components/OutfitBoard";
 import { Button, Card, Chip, Empty, PageHeader, Sheet, Spinner } from "@/components/ui";
 import { toEngine, useItems, useProfile } from "@/hooks/data";
-import { db, today as todayKey, uid } from "@/lib/db";
+import { db, logWorn, today as todayKey, uid } from "@/lib/db";
 import { generateOutfits, planTrip, type TripDayInput } from "@/lib/outfitEngine";
 import { addDays } from "@/lib/stats";
 import { CATEGORIES, CATEGORY_LABELS, OCCASION_INFO, type Occasion } from "@/lib/taxonomy";
-import type { Item, Trip } from "@/lib/types";
+import type { Item, Trip, WearLog } from "@/lib/types";
 import { dayTemp, fetchForecastRange, searchCity, type DayForecast, type GeoResult } from "@/lib/weather";
 
 const noop = () => () => {};
+const randomSeed = () => Math.floor(Math.random() * 1e9);
 
 const label = (key: string, opts: Intl.DateTimeFormatOptions) => {
   const [y, m, d] = key.split("-").map(Number);
@@ -81,6 +82,8 @@ export default function PlanPage() {
           })}
         </div>
       </section>
+
+      <History logs={logs} byId={byId} today={start} />
 
       <section>
         <div className="mb-3 flex items-center justify-between">
@@ -312,6 +315,34 @@ function TripForm({ items, onCreated }: { items: Item[]; onCreated: (id: string)
 }
 
 function TripView({ trip, byId, onDeleted }: { trip: Trip; byId: Map<string, Item>; onDeleted: () => void }) {
+  const profile = useProfile();
+  const [added, setAdded] = useState(false);
+  const regenerate = async (idx: number) => {
+    const d = trip.days[idx];
+    const others = new Set(trip.days.filter((_, i) => i !== idx).flatMap((x) => x.itemIds));
+    const current = [...d.itemIds].sort().join("|");
+    const { candidates } = generateOutfits(toEngine([...byId.values()]), {
+      occasion: d.occasion,
+      tempC: d.tempC,
+      precipProb: d.precipProb,
+      styleWeights: profile?.styleWeights,
+      avoidColors: profile?.avoidColors,
+      seed: randomSeed(),
+    }, 8);
+    // Prefer a different look that mostly reuses what's already packed.
+    const pick = candidates
+      .filter((c) => c.items.map((i) => i.id).sort().join("|") !== current)
+      .map((c) => ({ c, v: c.score.total + 0.1 * (c.items.filter((i) => others.has(i.id)).length / c.items.length) }))
+      .sort((a, b) => b.v - a.v)[0]?.c;
+    if (!pick) return;
+    const days = trip.days.map((x, i) => (i === idx ? { ...x, itemIds: pick.items.map((it) => it.id) } : x));
+    const packing = [...new Set(days.flatMap((x) => x.itemIds))];
+    await db.trips.update(trip.id, { days, packing, packed: trip.packed.filter((p) => packing.includes(p)) });
+  };
+  const addToPlanner = async () => {
+    await db.plans.bulkPut(trip.days.map((d) => ({ id: d.date, itemIds: d.itemIds, occasion: d.occasion })));
+    setAdded(true);
+  };
   const toggle = (id: string) =>
     db.trips.update(trip.id, { packed: trip.packed.includes(id) ? trip.packed.filter((x) => x !== id) : [...trip.packed, id] });
   const packItems = trip.packing.map((id) => byId.get(id)).filter((x): x is Item => !!x);
@@ -345,12 +376,20 @@ function TripView({ trip, byId, onDeleted }: { trip: Trip; byId: Map<string, Ite
       </section>
       <section className="space-y-3">
         <h3 className="display text-[20px]">Day by day</h3>
-        {trip.days.map((d) => (
+        <Button size="sm" variant="secondary" onClick={addToPlanner} disabled={added}>
+          {added ? "✓ Added to your planner" : "Add these days to my planner"}
+        </Button>
+        {trip.days.map((d, idx) => (
           <Card key={d.date}>
-            <p className="label mb-2 text-muted">
-              {label(d.date, { weekday: "short", day: "numeric", month: "short" })} · {OCCASION_INFO[d.occasion].label}
-              {d.tempC !== undefined && ` · ~${Math.round(d.tempC)}°C`}
-            </p>
+            <div className="mb-2 flex items-center justify-between">
+              <p className="label text-muted">
+                {label(d.date, { weekday: "short", day: "numeric", month: "short" })} · {OCCASION_INFO[d.occasion].label}
+                {d.tempC !== undefined && ` · ~${Math.round(d.tempC)}°C`}
+              </p>
+              <button className="label text-muted" onClick={() => regenerate(idx)} aria-label={`Another outfit for ${d.date}`}>
+                ↻ Another
+              </button>
+            </div>
             <OutfitBoard items={d.itemIds.map((id) => byId.get(id)).filter((x): x is Item => !!x)} compact />
           </Card>
         ))}
@@ -359,5 +398,72 @@ function TripView({ trip, byId, onDeleted }: { trip: Trip; byId: Map<string, Ite
         Delete trip
       </Button>
     </div>
+  );
+}
+
+/** Month view of what you wore; tap a day to see it and wear it again. */
+function History({ logs, byId, today }: { logs: WearLog[]; byId: Map<string, Item>; today: string }) {
+  const [offset, setOffset] = useState(0);
+  const [openDay, setOpenDay] = useState<string>();
+  const [y, m] = today.split("-").map(Number);
+  const first = new Date(y, m - 1 + offset, 1);
+  const monthKey = `${first.getFullYear()}-${String(first.getMonth() + 1).padStart(2, "0")}`;
+  const daysInMonth = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+  const lead = (first.getDay() + 6) % 7; // Monday-first
+  const byDate = new Map<string, WearLog>();
+  for (const l of logs) if (l.date.startsWith(monthKey)) byDate.set(l.date, l);
+  const open = openDay ? byDate.get(openDay) : undefined;
+  const openItems = open ? open.itemIds.map((id) => byId.get(id)).filter((x): x is Item => !!x) : [];
+
+  return (
+    <section>
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="display text-[24px]">Worn</h2>
+        <div className="flex items-center gap-2">
+          <button className="label h-8 w-8 rounded-btn border border-edge" onClick={() => setOffset(offset - 1)} aria-label="Previous month">‹</button>
+          <span className="label w-24 text-center">{first.toLocaleDateString(undefined, { month: "short", year: "numeric" })}</span>
+          <button className="label h-8 w-8 rounded-btn border border-edge disabled:opacity-30" disabled={offset >= 0} onClick={() => setOffset(offset + 1)} aria-label="Next month">›</button>
+        </div>
+      </div>
+      <div className="grid grid-cols-7 gap-1 text-center">
+        {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => (
+          <span key={i} className="label text-muted">{d}</span>
+        ))}
+        {Array.from({ length: lead }, (_, i) => <span key={`b${i}`} />)}
+        {Array.from({ length: daysInMonth }, (_, i) => {
+          const date = `${monthKey}-${String(i + 1).padStart(2, "0")}`;
+          const log = byDate.get(date);
+          const thumb = log ? byId.get(log.itemIds.find((id) => ["top", "onepiece"].includes(byId.get(id)?.category ?? "")) ?? log.itemIds[0]) : undefined;
+          return (
+            <button
+              key={date}
+              disabled={!log}
+              onClick={() => setOpenDay(date)}
+              aria-label={log ? `Outfit worn on ${date}` : undefined}
+              className={`relative aspect-square overflow-hidden rounded-tile border text-[11px] ${date === today ? "border-ink" : "border-line"} ${log ? "" : "text-muted"}`}
+            >
+              {thumb && <ItemImage blob={thumb.thumb} alt="" plain className="absolute inset-0 h-full w-full" />}
+              <span className={`absolute top-0.5 left-1 ${thumb ? "rounded-sm bg-card/80 px-0.5" : ""}`}>{i + 1}</span>
+            </button>
+          );
+        })}
+      </div>
+      <p className="mt-2 text-[12px] text-muted">{byDate.size} days logged this month</p>
+      <Sheet open={!!open} onClose={() => setOpenDay(undefined)} title={openDay ? label(openDay, { weekday: "long", day: "numeric", month: "long" }) : ""}>
+        {open && (
+          <div className="space-y-3 pb-4">
+            <OutfitBoard items={openItems} compact />
+            <Button
+              onClick={async () => {
+                await logWorn(open.itemIds, open.outfitId);
+                setOpenDay(undefined);
+              }}
+            >
+              Wear it again today
+            </Button>
+          </div>
+        )}
+      </Sheet>
+    </section>
   );
 }

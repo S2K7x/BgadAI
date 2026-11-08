@@ -24,6 +24,13 @@ A mobile-first web app (installable PWA) that builds outfits from **your own clo
 - 🔥 **Habits** — logging streak, weekly challenges (rediscover forgotten pieces, variety),
   #30wears progress, badges, and a shareable **Style Wrapped** year recap.
 - ♻️ **Declutter** — pieces idle for 3+ months with Style it / Sell / Archive.
+- 🧠 **Learns your taste** — every 👍 / 👎 / "wear today" nudges your style profile.
+- 🧺 **Closet tools** — sort by recent / most worn / least worn / colour, multi-select bulk
+  actions (laundry, clean, archive, delete), and laundry that returns by itself after N days.
+- 📆 **Worn calendar** — month view of what you wore, "wear it again"; trips can swap a day's
+  outfit and drop the whole trip into your planner.
+- 📶 **Works offline** — a service worker caches the app and sample photos; an Offline badge shows
+  when you lose connection. Weather calls retry on rate limits and are cached.
 - 📤 **Share** — outfit cards and an "A or B?" poll image for friends, via the native share sheet.
 - 📊 **Me** — style profile, wear stats, cost-per-wear, never-worn list, colour palette,
   preferences, and JSON backup/restore.

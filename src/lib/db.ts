@@ -48,6 +48,7 @@ export const DEFAULT_PROFILE: StyleProfile = {
   favoriteColors: [],
   avoidColors: [],
   backgroundRemoval: false,
+  laundryDays: 3,
 };
 
 export async function getProfile(): Promise<StyleProfile> {
@@ -183,4 +184,27 @@ export async function removeSampleCloset() {
   const ids = (await db.items.toArray()).filter((i) => i.sample).map((i) => i.id);
   await db.items.bulkDelete(ids);
   return ids.length;
+}
+
+/** Move pieces between closet and laundry (records when they went in). */
+export async function setLaundry(ids: string[], inLaundry: boolean) {
+  const at = Date.now();
+  await db.items.where("id").anyOf(ids).modify((i) => {
+    i.status = inLaundry ? "laundry" : "active";
+    i.laundryAt = inLaundry ? at : undefined;
+  });
+}
+
+/** Return laundry that has been out longer than the profile setting. Returns how many came back. */
+export async function returnCleanLaundry(days: number, now = Date.now()): Promise<number> {
+  if (!days) return 0;
+  const cutoff = now - days * 86_400_000;
+  return db.items
+    .where("status")
+    .equals("laundry")
+    .filter((i) => (i.laundryAt ?? 0) <= cutoff)
+    .modify((i) => {
+      i.status = "active";
+      i.laundryAt = undefined;
+    });
 }

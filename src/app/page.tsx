@@ -9,7 +9,8 @@ import { SampleClosetButton } from "@/components/SampleClosetButton";
 import { Hero, type HeroVisual } from "@/components/Hero";
 import { Button, Chip, Empty, Meter, SectionTitle, Sheet, Spinner } from "@/components/ui";
 import { toEngine, useAiStatus, useItems, useProfile, useWeather } from "@/hooks/data";
-import { db, logWorn, today, uid } from "@/lib/db";
+import { db, logWorn, saveProfile, today, uid } from "@/lib/db";
+import { nudgeStyles, SIGNAL } from "@/lib/learning";
 import { outfitCard, pollCard, shareImage } from "@/lib/share";
 import { explain, generateOutfits, MOOD_INFO, MOODS, scoreOutfit, type Mood, swapOptions, type Candidate, type EngineContext } from "@/lib/outfitEngine";
 import { topStyles } from "@/lib/style";
@@ -94,6 +95,10 @@ function Today() {
       return { ...c, items: eng, pieces: eng.map((i) => ({ slot: i.category, itemId: i.id })), score, explanation: explain(eng, score, ctx), aiNote: undefined };
     });
   }, [result, aiPicks, overrides, byId, ctx]);
+
+  const learn = async (pieces: { styles: Item["styles"] }[], signal: number) => {
+    if (profile) await saveProfile({ styleWeights: nudgeStyles(profile.styleWeights, pieces, signal) });
+  };
 
   const flash = (t: string) => {
     setToast(t);
@@ -192,6 +197,7 @@ function Today() {
             className="mt-3"
             onClick={async () => {
               await logWorn(todaysPlan.itemIds, todaysPlan.outfitId);
+              await learn(todaysPlan.itemIds.map((id) => byId.get(id)).filter((x): x is Item => !!x), SIGNAL.wear);
               flash("Logged as today's outfit ✓");
             }}
           >
@@ -269,7 +275,8 @@ function Today() {
                 onSwapPiece={(item) => setSwap({ key: c.key, item })}
                 onRate={async (r) => {
                   await db.feedback.add({ id: uid(), createdAt: Date.now(), itemIds: c.items.map((i) => i.id), rating: r });
-                  flash(r > 0 ? "Noted — more like this 👍" : "Got it — fewer like this");
+                  await learn(c.items, r > 0 ? SIGNAL.like : SIGNAL.dislike);
+                  flash(r > 0 ? "Noted — your taste profile learned from this 👍" : "Got it — fewer like this");
                 }}
                 onSave={async () => {
                   await db.outfits.add({
@@ -285,6 +292,7 @@ function Today() {
                 }}
                 onWear={async () => {
                   await logWorn(c.items.map((i) => i.id));
+                  await learn(c.items, SIGNAL.wear);
                   flash("Logged as today's outfit ✓");
                 }}
                 onShare={async () => {

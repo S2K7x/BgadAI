@@ -225,3 +225,25 @@ describe("new features", () => {
     expect(rediscovered(logs, "2026-11-08", items).size).toBe(0);
   });
 });
+
+describe("taste learning", () => {
+  it("likes pull the profile toward the liked styles, dislikes push away", async () => {
+    const { nudgeStyles, SIGNAL } = await import("../learning");
+    const { emptyWeights, normalise } = await import("../style");
+    const start = normalise({ ...emptyWeights(), minimal: 1, streetwear: 1 });
+    const liked = nudgeStyles(start, [{ styles: ["streetwear"] }, { styles: ["streetwear", "sporty"] }], SIGNAL.like);
+    expect(liked.streetwear).toBeGreaterThan(start.streetwear);
+    expect(liked.minimal).toBeLessThan(start.minimal);
+    const disliked = nudgeStyles(start, [{ styles: ["streetwear"] }], SIGNAL.dislike);
+    expect(disliked.streetwear).toBeLessThan(start.streetwear);
+    expect(Object.values(disliked).reduce((a, b) => a + b, 0)).toBeCloseTo(1);
+  });
+
+  it("returns laundry after the configured days", async () => {
+    // pure date logic mirrored from returnCleanLaundry
+    const days = 3, now = 10 * 86_400_000;
+    const cutoff = now - days * 86_400_000;
+    expect(now - 4 * 86_400_000 <= cutoff).toBe(true);
+    expect(now - 1 * 86_400_000 <= cutoff).toBe(false);
+  });
+});

@@ -1,10 +1,20 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useProfile } from "@/hooks/data";
-import { getProfile } from "@/lib/db";
+import { useOffline } from "next/offline";
+import { getProfile, returnCleanLaundry } from "@/lib/db";
 import { useTheme } from "@/hooks/theme";
+
+const subscribeOnline = (cb: () => void) => {
+  window.addEventListener("online", cb);
+  window.addEventListener("offline", cb);
+  return () => {
+    window.removeEventListener("online", cb);
+    window.removeEventListener("offline", cb);
+  };
+};
 
 const NAV = [
   { href: "/", label: "Today", icon: SunIcon },
@@ -20,6 +30,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const profile = useProfile();
   const onboarding = pathname.startsWith("/onboarding");
+  // Next's useOffline catches failed navigations; the browser's own signal covers pages the
+  // service worker serves from cache (no request fails there).
+  const navFailed = useOffline();
+  const online = useSyncExternalStore(subscribeOnline, () => navigator.onLine, () => true);
+  const offline = navFailed || !online;
+
+  // Laundry comes back by itself after the configured number of days.
+  const laundryDays = profile?.laundryDays;
+  useEffect(() => {
+    if (laundryDays) returnCleanLaundry(laundryDays);
+  }, [laundryDays]);
+
+  // Offline support: cache the app shell + sample photos (production only).
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+  }, []);
 
   useEffect(() => {
     if (!profile || profile.completedOnboarding || onboarding) return;
@@ -40,7 +68,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span className="only-synth h-4 w-1.5 bg-ink" aria-hidden />
           <span className="display text-[17px] tracking-[0.08em] [font-stretch:var(--display-stretch)]">BgadAI</span>
         </Link>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          {offline && <span className="label rounded-btn bg-bad px-2 py-1 text-white">Offline</span>}
+          <ThemeToggle />
+        </div>
       </header>
       <main className={`flex-1 px-4 pt-3 ${onboarding ? "pb-8" : "pb-28"}`}>{children}</main>
       {!onboarding && (
