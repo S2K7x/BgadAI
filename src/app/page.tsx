@@ -9,8 +9,10 @@ import { SampleClosetButton } from "@/components/SampleClosetButton";
 import { Hero, type HeroVisual } from "@/components/Hero";
 import { Button, Chip, Empty, Meter, SectionTitle, Sheet, Spinner } from "@/components/ui";
 import { toEngine, useAiStatus, useItems, useProfile, useWeather } from "@/hooks/data";
-import { db, logWorn, today, uid } from "@/lib/db";
-import { explain, generateOutfits, scoreOutfit, swapOptions, type Candidate, type EngineContext } from "@/lib/outfitEngine";
+import { db, logWorn, saveProfile, today, uid } from "@/lib/db";
+import { nudgeStyles, SIGNAL } from "@/lib/learning";
+import { outfitCard, pollCard, shareImage } from "@/lib/share";
+import { explain, generateOutfits, MOOD_INFO, MOODS, scoreOutfit, type Mood, swapOptions, type Candidate, type EngineContext } from "@/lib/outfitEngine";
 import { topStyles } from "@/lib/style";
 import { CATEGORY_LABELS, OCCASIONS, OCCASION_INFO, STYLE_INFO, type Occasion } from "@/lib/taxonomy";
 import type { Item } from "@/lib/types";
@@ -36,10 +38,12 @@ function Today() {
   const feedback = useLiveQuery(() => db.feedback.toArray(), []);
   const wornToday = useLiveQuery(() => db.wearLogs.where("date").equals(today()).count(), []);
   const [occasion, setOccasion] = useState<Occasion>();
+  const [mood, setMood] = useState<Mood>();
+  const todaysPlan = useLiveQuery(() => db.plans.get(today()), []);
   const [shuffle, setShuffle] = useState(0);
   const [day] = useState(dayIndex);
   // Local tweaks are tied to the current inputs, so they reset when occasion/shuffle/anchor change.
-  const resetKey = `${occasion}|${shuffle}|${anchorId}`;
+  const resetKey = `${occasion}|${shuffle}|${anchorId}|${mood}`;
   const [ov, setOv] = useState<{ k: string; v: Record<string, string[]> }>();
   const overrides = useMemo(() => (ov?.k === resetKey ? ov.v : {}), [ov, resetKey]);
   const setOverrides = (fn: (o: Record<string, string[]>) => Record<string, string[]>) => setOv({ k: resetKey, v: fn(overrides) });
@@ -65,8 +69,9 @@ function Today() {
       feedback,
       anchorIds: anchor ? [anchor.id] : undefined,
       seed: day + shuffle * 7919,
+      mood,
     }),
-    [occ, weather, profile, feedback, anchor, shuffle, day],
+    [occ, weather, profile, feedback, anchor, shuffle, day, mood],
   );
 
   const engineItems = useMemo(() => toEngine(items ?? []), [items]);
@@ -90,6 +95,10 @@ function Today() {
       return { ...c, items: eng, pieces: eng.map((i) => ({ slot: i.category, itemId: i.id })), score, explanation: explain(eng, score, ctx), aiNote: undefined };
     });
   }, [result, aiPicks, overrides, byId, ctx]);
+
+  const learn = async (pieces: { styles: Item["styles"] }[], signal: number) => {
+    if (profile) await saveProfile({ styleWeights: nudgeStyles(profile.styleWeights, pieces, signal) });
+  };
 
   const flash = (t: string) => {
     setToast(t);
@@ -165,6 +174,37 @@ function Today() {
           </Chip>
         ))}
       </div>
+      <div className="no-scrollbar -mx-4 mt-2 flex items-center gap-2 overflow-x-auto px-4">
+        <span className="label shrink-0 text-muted">Feeling</span>
+        {MOODS.map((m) => (
+          <button
+            key={m}
+            onClick={() => setMood(mood === m ? undefined : m)}
+            aria-pressed={mood === m}
+            className={`label h-7 shrink-0 rounded-btn px-2.5 ${mood === m ? "bg-accent text-accent-ink" : "text-ink hover:bg-soft"}`}
+          >
+            {MOOD_INFO[m].emoji} {MOOD_INFO[m].label}
+          </button>
+        ))}
+      </div>
+
+      {todaysPlan && todaysPlan.itemIds.length > 0 && !wornToday && (
+        <div className="mt-5 rounded-card border border-edge bg-card p-3">
+          <p className="label mb-2 text-muted">Planned for today</p>
+          <OutfitBoard items={todaysPlan.itemIds.map((id) => byId.get(id)).filter((x): x is Item => !!x)} compact />
+          <Button
+            size="sm"
+            className="mt-3"
+            onClick={async () => {
+              await logWorn(todaysPlan.itemIds, todaysPlan.outfitId);
+              await learn(todaysPlan.itemIds.map((id) => byId.get(id)).filter((x): x is Item => !!x), SIGNAL.wear);
+              flash("Logged as today's outfit ✓");
+            }}
+          >
+            Wear it
+          </Button>
+        </div>
+      )}
 
       {anchor && (
         <div className="mt-4 flex items-center gap-3 rounded-tile border border-line bg-card p-2 pr-3">
@@ -207,6 +247,19 @@ function Today() {
               <Button size="sm" variant="secondary" onClick={() => setShuffle((s) => s + 1)} aria-label="Shuffle outfits">
                 ↻
               </Button>
+              {shown.length >= 2 && (
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={async () => {
+                    const pieces = (c: Shown) => c.items.map((i) => ({ blob: byId.get(i.id)?.thumb }));
+                    const r = await shareImage(await pollCard(pieces(shown[0]), pieces(shown[1])), "a-or-b.png", "Which one should I wear today? A or B?");
+                    if (r === "downloaded") flash("Poll image saved — send it to friends");
+                  }}
+                >
+                  A or B?
+                </Button>
+              )}
             </div>
           </div>
           {aiError && <p className="mt-2 text-sm text-bad">{aiError}</p>}
@@ -222,7 +275,8 @@ function Today() {
                 onSwapPiece={(item) => setSwap({ key: c.key, item })}
                 onRate={async (r) => {
                   await db.feedback.add({ id: uid(), createdAt: Date.now(), itemIds: c.items.map((i) => i.id), rating: r });
-                  flash(r > 0 ? "Noted — more like this 👍" : "Got it — fewer like this");
+                  await learn(c.items, r > 0 ? SIGNAL.like : SIGNAL.dislike);
+                  flash(r > 0 ? "Noted — your taste profile learned from this 👍" : "Got it — fewer like this");
                 }}
                 onSave={async () => {
                   await db.outfits.add({
@@ -238,7 +292,13 @@ function Today() {
                 }}
                 onWear={async () => {
                   await logWorn(c.items.map((i) => i.id));
+                  await learn(c.items, SIGNAL.wear);
                   flash("Logged as today's outfit ✓");
+                }}
+                onShare={async () => {
+                  const blob = await outfitCard(c.title ?? "Today's look", c.aiNote ?? c.explanation, c.items.map((i) => ({ blob: byId.get(i.id)?.thumb })));
+                  const r = await shareImage(blob, "outfit.png", "My outfit today, styled from my own closet");
+                  if (r === "downloaded") flash("Outfit image saved");
                 }}
               />
             ))}
@@ -320,6 +380,7 @@ function OutfitCard({
   onSwapPiece,
   onRate,
   onSave,
+  onShare,
   onWear,
 }: {
   c: Shown;
@@ -328,6 +389,7 @@ function OutfitCard({
   onSwapPiece: (i: Item) => void;
   onRate: (r: 1 | -1) => void;
   onSave: () => void;
+  onShare: () => void;
   onWear: () => void;
 }) {
   const [why, setWhy] = useState(false);
@@ -357,6 +419,7 @@ function OutfitCard({
         <div className="mt-3 flex items-center gap-2">
           <Button size="sm" onClick={onWear}>Wear today</Button>
           <Button size="sm" variant="secondary" onClick={onSave}>Save</Button>
+          <Button size="sm" variant="ghost" onClick={onShare} aria-label="Share outfit">Share</Button>
           <div className="ml-auto flex gap-1">
             {([1, -1] as const).map((r) => (
               <button

@@ -42,7 +42,7 @@ export function useAiStatus(): AiStatus | undefined {
   return s;
 }
 
-const WEATHER_TTL = 30 * 60 * 1000;
+const WEATHER_TTL = 60 * 60 * 1000;
 
 export function useWeather(profile?: StyleProfile): { weather?: Weather; error?: string; loading: boolean } {
   const [state, setState] = useState<{ key: string; weather?: Weather; error?: string }>();
@@ -53,7 +53,7 @@ export function useWeather(profile?: StyleProfile): { weather?: Weather; error?:
     let alive = true;
     (async () => {
       try {
-        const cached = JSON.parse(sessionStorage.getItem(key) ?? "null");
+        const cached = JSON.parse(localStorage.getItem(key) ?? "null");
         if (cached && Date.now() - cached.at < WEATHER_TTL) {
           setState({ key, weather: cached.weather });
           return;
@@ -62,7 +62,7 @@ export function useWeather(profile?: StyleProfile): { weather?: Weather; error?:
       try {
         const weather = await fetchWeather(city.latitude, city.longitude);
         try {
-          sessionStorage.setItem(key, JSON.stringify({ at: Date.now(), weather }));
+          localStorage.setItem(key, JSON.stringify({ at: Date.now(), weather }));
         } catch {}
         if (alive) setState({ key, weather });
       } catch (e) {

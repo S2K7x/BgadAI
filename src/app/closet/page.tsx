@@ -8,9 +8,18 @@ import { SampleClosetButton } from "@/components/SampleClosetButton";
 import { TagEditor } from "@/components/TagEditor";
 import { Button, Chip, Empty, PageHeader, Sheet, Spinner, Stats, Swatch } from "@/components/ui";
 import { useItems } from "@/hooks/data";
-import { db } from "@/lib/db";
+import { db, setLaundry } from "@/lib/db";
 import { CATEGORIES, CATEGORY_LABELS, COLOR_NAMES, subLabel, type Category, type ColorName } from "@/lib/taxonomy";
 import type { Item, ItemTags } from "@/lib/types";
+
+type SortKey = "recent" | "most" | "least" | "colour" | "category";
+const SORTS: Record<SortKey, { label: string; fn: (a: Item, b: Item) => number }> = {
+  recent: { label: "Recently added", fn: (a, b) => b.createdAt - a.createdAt },
+  most: { label: "Most worn", fn: (a, b) => b.wearCount - a.wearCount },
+  least: { label: "Least worn", fn: (a, b) => a.wearCount - b.wearCount || (a.lastWornAt ?? 0) - (b.lastWornAt ?? 0) },
+  colour: { label: "Colour", fn: (a, b) => COLOR_NAMES.indexOf(a.colors[0]) - COLOR_NAMES.indexOf(b.colors[0]) },
+  category: { label: "Category", fn: (a, b) => CATEGORIES.indexOf(a.category) - CATEGORIES.indexOf(b.category) },
+};
 
 export default function ClosetPage() {
   const items = useItems();
@@ -19,11 +28,14 @@ export default function ClosetPage() {
   const [color, setColor] = useState<ColorName>();
   const [q, setQ] = useState("");
   const [showLaundry, setShowLaundry] = useState(true);
+  const [sort, setSort] = useState<SortKey>("recent");
+  const [selecting, setSelecting] = useState(false);
+  const [picked, setPicked] = useState<Set<string>>(new Set());
   const [open, setOpen] = useState<Item>();
 
   const visible = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    return (items ?? []).filter(
+    const list = (items ?? []).filter(
       (i) =>
         i.status !== "archived" &&
         (showLaundry || i.status === "active") &&
@@ -31,7 +43,8 @@ export default function ClosetPage() {
         (!color || i.colors.includes(color)) &&
         (!needle || `${i.name} ${i.subcategory} ${i.brand ?? ""} ${i.colors.join(" ")} ${i.styles.join(" ")}`.toLowerCase().includes(needle)),
     );
-  }, [items, cat, color, q, showLaundry]);
+    return [...list].sort(SORTS[sort].fn);
+  }, [items, cat, color, q, showLaundry, sort]);
 
   const counts = useMemo(() => {
     const m = new Map<string, number>();
@@ -105,10 +118,44 @@ export default function ClosetPage() {
             </label>
           </div>
 
+          <div className="mt-3 flex items-center justify-between gap-2">
+            <label className="label flex items-center gap-2 text-muted">
+              Sort
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as SortKey)}
+                className="label h-8 rounded-btn border border-edge bg-transparent px-2 text-ink"
+              >
+                {(Object.keys(SORTS) as SortKey[]).map((k) => (
+                  <option key={k} value={k}>{SORTS[k].label}</option>
+                ))}
+              </select>
+            </label>
+            <button
+              className="label h-8 rounded-btn border border-edge px-3"
+              onClick={() => {
+                setSelecting(!selecting);
+                setPicked(new Set());
+              }}
+            >
+              {selecting ? "Done" : "Select"}
+            </button>
+          </div>
+
           <ul className="mt-5 grid grid-cols-2 gap-x-3 gap-y-6">
             {visible.map((i) => (
               <li key={i.id} className="cv-auto">
-                <button onClick={() => setOpen(i)} className="group block w-full text-center">
+                <button
+                  onClick={() => {
+                    if (!selecting) return setOpen(i);
+                    const next = new Set(picked);
+                    if (next.has(i.id)) next.delete(i.id);
+                    else next.add(i.id);
+                    setPicked(next);
+                  }}
+                  aria-pressed={selecting ? picked.has(i.id) : undefined}
+                  className={`group block w-full text-center ${selecting && picked.has(i.id) ? "outline-2 outline-offset-2 outline-ink" : ""}`}
+                >
                   <div className="relative">
                     <ItemImage
                       blob={i.thumb}
@@ -116,6 +163,11 @@ export default function ClosetPage() {
                       className={`aspect-[3/4] transition group-active:scale-[0.98] ${i.status === "laundry" ? "opacity-40" : ""}`}
                     />
                     {i.status === "laundry" && <span className="label absolute top-2 left-2 bg-card px-1.5 py-0.5">Laundry</span>}
+                    {selecting && (
+                      <span className={`absolute top-2 right-2 grid h-6 w-6 place-items-center rounded-btn border-2 border-ink text-[13px] ${picked.has(i.id) ? "bg-ink text-bg" : "bg-card"}`}>
+                        {picked.has(i.id) ? "✓" : ""}
+                      </span>
+                    )}
                   </div>
                   <p className="mt-2 truncate text-[12.5px] font-medium">{i.name}</p>
                   <p className="label mt-0.5 text-muted">
@@ -126,6 +178,31 @@ export default function ClosetPage() {
             ))}
           </ul>
           {visible.length === 0 && <p className="mt-8 text-center text-sm text-muted">No pieces match these filters.</p>}
+
+          {selecting && (
+            <div className="sticky bottom-24 z-20 mt-6 flex flex-wrap items-center gap-2 rounded-card border border-edge bg-card p-2 shadow-lg">
+              <span className="label px-1">{picked.size} selected</span>
+              <button className="label ml-auto" onClick={() => setPicked(picked.size === visible.length ? new Set() : new Set(visible.map((i) => i.id)))}>
+                {picked.size === visible.length ? "None" : "All"}
+              </button>
+              <Button size="sm" variant="secondary" disabled={!picked.size} onClick={async () => { await setLaundry([...picked], true); setPicked(new Set()); }}>🧺 Laundry</Button>
+              <Button size="sm" variant="secondary" disabled={!picked.size} onClick={async () => { await setLaundry([...picked], false); setPicked(new Set()); }}>Clean</Button>
+              <Button size="sm" variant="secondary" disabled={!picked.size} onClick={async () => { await db.items.where("id").anyOf([...picked]).modify({ status: "archived" }); setPicked(new Set()); }}>Archive</Button>
+              <Button
+                size="sm"
+                variant="danger"
+                disabled={!picked.size}
+                onClick={async () => {
+                  if (confirm(`Delete ${picked.size} piece${picked.size > 1 ? "s" : ""}?`)) {
+                    await db.items.bulkDelete([...picked]);
+                    setPicked(new Set());
+                  }
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+          )}
         </>
       )}
 
@@ -169,7 +246,7 @@ function ItemDetail({ item, onClose, onStyle }: { item: Item; onClose: () => voi
         <Button
           variant="secondary"
           onClick={async () => {
-            await db.items.update(item.id, { status: item.status === "laundry" ? "active" : "laundry" });
+            await setLaundry([item.id], item.status !== "laundry");
             onClose();
           }}
         >

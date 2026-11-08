@@ -25,6 +25,8 @@ export type Item = ItemTags & {
   status: "active" | "laundry" | "archived";
   wearCount: number;
   lastWornAt?: number;
+  /** When the item went into the laundry (auto-returns after the profile's laundryDays). */
+  laundryAt?: number;
   /** Set for pieces loaded from the bundled sample closet. */
   sample?: string;
 };
@@ -68,6 +70,8 @@ export type StyleProfile = {
   favoriteColors: ColorName[];
   avoidColors: ColorName[];
   backgroundRemoval: boolean;
+  /** Days after which laundry returns to the closet automatically (0 = never). */
+  laundryDays: number;
 };
 
 export type DetectedGarment = {
@@ -96,4 +100,32 @@ export type Weather = {
   code: number;
   summary: string;
   emoji: string;
+};
+
+/** An outfit planned for a calendar day (id = YYYY-MM-DD). */
+export type DayPlan = {
+  id: string;
+  itemIds: string[];
+  occasion?: import("./taxonomy").Occasion;
+  outfitId?: string;
+};
+
+export type Trip = {
+  id: string;
+  createdAt: number;
+  city: { name: string; latitude: number; longitude: number; country?: string };
+  start: string; // YYYY-MM-DD
+  nights: number;
+  days: { date: string; occasion: import("./taxonomy").Occasion; tempC?: number; precipProb?: number; itemIds: string[] }[];
+  packing: string[];
+  packed: string[];
+};
+
+/** A piece you're thinking of buying, checked against your closet. */
+export type WishItem = ItemTags & {
+  id: string;
+  createdAt: number;
+  thumb?: Blob;
+  src?: string;
+  unlocks: number;
 };

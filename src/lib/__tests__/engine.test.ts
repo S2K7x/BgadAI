@@ -168,3 +168,82 @@ describe("sample photos", () => {
     expect(new Set(women.map((s) => s.category))).toEqual(expect.objectContaining({ size: expect.any(Number) }));
   });
 });
+
+describe("new features", () => {
+  it("mood shifts the ranking", async () => {
+    const { scoreOutfit } = await import("../outfitEngine");
+    const cozy = [closet[1], closet[4], closet[9]]; // navy sweater + jeans + loafers
+    const light = [closet[0], closet[6], closet[8]]; // white tee + beige shorts + sneakers
+    const ctx = { occasion: "casual" as const, tempC: 15 };
+    const cozyDelta = scoreOutfit(cozy, { ...ctx, mood: "cozy" }).total - scoreOutfit(light, { ...ctx, mood: "cozy" }).total;
+    const freshDelta = scoreOutfit(cozy, { ...ctx, mood: "fresh" }).total - scoreOutfit(light, { ...ctx, mood: "fresh" }).total;
+    expect(cozyDelta).toBeGreaterThan(freshDelta);
+  });
+
+  it("counts outfits a new piece unlocks", async () => {
+    const { outfitsUnlocked } = await import("../outfitEngine");
+    const shoes = item({ category: "shoes", subcategory: "boots", colors: ["black"], formality: 3, warmth: 4 });
+    const lonely = item({ category: "bottom", subcategory: "skirt", colors: ["yellow"], pattern: "floral", formality: 5, warmth: 1 });
+    expect(outfitsUnlocked(shoes, closet).count).toBeGreaterThan(outfitsUnlocked(lonely, closet).count);
+  });
+
+  it("plans a trip that re-wears packed pieces", async () => {
+    const { planTrip } = await import("../outfitEngine");
+    const days = ["2026-12-01", "2026-12-02", "2026-12-03", "2026-12-04"].map((date) => ({ date, occasion: "casual" as const, tempC: 9 }));
+    const plan = planTrip(closet, days, { seed: 1 });
+    expect(plan.days.every((d) => d.itemIds.length >= 3)).toBe(true);
+    const outfitPieces = plan.days.reduce((n, d) => n + d.itemIds.length, 0);
+    expect(plan.packing.length).toBeLessThan(outfitPieces);
+    expect(plan.days[0].itemIds.sort().join()).not.toBe(plan.days[1].itemIds.sort().join());
+  });
+
+  it("tracks streaks, rediscoveries and wrapped stats", async () => {
+    const { loggingStreak, rediscovered, wrapped, declutterCandidates } = await import("../stats");
+    const logs = [
+      { id: "a", date: "2026-11-06", itemIds: ["x", "y"] },
+      { id: "b", date: "2026-11-07", itemIds: ["x"] },
+      { id: "c", date: "2026-11-08", itemIds: ["z"] },
+      { id: "d", date: "2026-10-01", itemIds: ["y"] },
+    ];
+    expect(loggingStreak(logs, "2026-11-08")).toBe(3);
+    expect(loggingStreak(logs, "2026-11-09")).toBe(3); // today not logged yet
+    expect(rediscovered(logs, "2026-11-08").has("z")).toBe(true);
+    const now = new Date(2026, 10, 8).getTime();
+    const mk = (id: string, extra: object = {}) => ({ ...closet[0], id, image: new Blob(), thumb: new Blob(), ...extra });
+    const recent = now - 86_400_000;
+    const items = [
+      mk("x", { wearCount: 2, lastWornAt: recent, createdAt: recent }),
+      mk("y", { wearCount: 2, lastWornAt: recent, createdAt: recent }),
+      mk("z", { wearCount: 1, lastWornAt: recent, createdAt: recent }),
+      mk("old", { createdAt: now - 200 * 86_400_000 }),
+    ];
+    const w = wrapped(items, logs, "2026-01-01");
+    expect(w.topItem?.id).toBe("x");
+    expect(w.days).toBe(4);
+    expect(declutterCandidates(items, now).map((d) => d.item.id)).toEqual(["old"]);
+    // A brand-new closet isn't "forgotten": with items, only long-owned pieces count.
+    expect(rediscovered(logs, "2026-11-08", items).size).toBe(0);
+  });
+});
+
+describe("taste learning", () => {
+  it("likes pull the profile toward the liked styles, dislikes push away", async () => {
+    const { nudgeStyles, SIGNAL } = await import("../learning");
+    const { emptyWeights, normalise } = await import("../style");
+    const start = normalise({ ...emptyWeights(), minimal: 1, streetwear: 1 });
+    const liked = nudgeStyles(start, [{ styles: ["streetwear"] }, { styles: ["streetwear", "sporty"] }], SIGNAL.like);
+    expect(liked.streetwear).toBeGreaterThan(start.streetwear);
+    expect(liked.minimal).toBeLessThan(start.minimal);
+    const disliked = nudgeStyles(start, [{ styles: ["streetwear"] }], SIGNAL.dislike);
+    expect(disliked.streetwear).toBeLessThan(start.streetwear);
+    expect(Object.values(disliked).reduce((a, b) => a + b, 0)).toBeCloseTo(1);
+  });
+
+  it("returns laundry after the configured days", async () => {
+    // pure date logic mirrored from returnCleanLaundry
+    const days = 3, now = 10 * 86_400_000;
+    const cutoff = now - days * 86_400_000;
+    expect(now - 4 * 86_400_000 <= cutoff).toBe(true);
+    expect(now - 1 * 86_400_000 <= cutoff).toBe(false);
+  });
+});

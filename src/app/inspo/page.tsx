@@ -1,6 +1,7 @@
 "use client";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useMemo, useRef, useState } from "react";
+import { BuyCheck } from "@/components/BuyCheck";
 import { PieceImage } from "@/components/PieceImage";
 import { ItemImage } from "@/components/ItemImage";
 import { Button, Card, Chip, ColorPicker, Empty, PageHeader, Sheet, Spinner } from "@/components/ui";
@@ -13,6 +14,31 @@ import { CATEGORIES, CATEGORY_LABELS, SUBCATEGORIES, categoryOf, subLabel, type 
 import type { DetectedGarment, Inspiration, Item } from "@/lib/types";
 
 export default function InspoPage() {
+  const [tab, setTab] = useState<"recreate" | "buy">("recreate");
+  return (
+    <div>
+      <PageHeader
+        title="Inspo"
+        accent={tab === "recreate" ? "Love it? Rebuild it." : "Buy less, wear more."}
+        subtitle={tab === "recreate" ? "Upload a look you love — we'll rebuild it from your closet and find the missing pieces." : undefined}
+      />
+      <div className="mb-5 grid grid-cols-2 border-b border-line">
+        {(["recreate", "buy"] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={`label -mb-px h-10 border-b-2 ${tab === t ? "border-ink text-ink dark:border-accent-text" : "border-transparent text-muted"}`}
+          >
+            {t === "recreate" ? "Recreate a look" : "Before you buy"}
+          </button>
+        ))}
+      </div>
+      {tab === "recreate" ? <RecreateLook /> : <BuyCheck />}
+    </div>
+  );
+}
+
+function RecreateLook() {
   const ai = useAiStatus();
   const items = useItems();
   const profile = useProfile();
@@ -83,12 +109,6 @@ export default function InspoPage() {
 
   return (
     <div>
-      <PageHeader
-        title="Inspo"
-        accent="Love it? Rebuild it."
-        subtitle="Upload a look you love — we'll rebuild it from your closet and find the missing pieces."
-      />
-
       <button
         onClick={() => fileRef.current?.click()}
         disabled={!!busy}

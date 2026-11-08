@@ -3,7 +3,7 @@
  * except when the user explicitly runs AI analysis on them.
  */
 import Dexie, { type EntityTable } from "dexie";
-import type { Feedback, Inspiration, Item, Outfit, StyleProfile, WearLog } from "./types";
+import type { DayPlan, Feedback, Inspiration, Item, Outfit, StyleProfile, Trip, WearLog, WishItem } from "./types";
 import { emptyWeights } from "./style";
 
 type ProfileRow = StyleProfile & { id: "me" };
@@ -15,6 +15,9 @@ class BgadDB extends Dexie {
   feedback!: EntityTable<Feedback, "id">;
   inspirations!: EntityTable<Inspiration, "id">;
   profile!: EntityTable<ProfileRow, "id">;
+  plans!: EntityTable<DayPlan, "id">;
+  trips!: EntityTable<Trip, "id">;
+  wishlist!: EntityTable<WishItem, "id">;
 
   constructor() {
     super("bgadai");
@@ -25,6 +28,11 @@ class BgadDB extends Dexie {
       feedback: "id, createdAt",
       inspirations: "id, createdAt",
       profile: "id",
+    });
+    this.version(2).stores({
+      plans: "id",
+      trips: "id, createdAt",
+      wishlist: "id, createdAt",
     });
   }
 }
@@ -40,6 +48,7 @@ export const DEFAULT_PROFILE: StyleProfile = {
   favoriteColors: [],
   avoidColors: [],
   backgroundRemoval: false,
+  laundryDays: 3,
 };
 
 export async function getProfile(): Promise<StyleProfile> {
@@ -132,7 +141,9 @@ export async function importAll(file: File) {
 }
 
 export async function wipeAll() {
-  await Promise.all([db.items.clear(), db.outfits.clear(), db.wearLogs.clear(), db.feedback.clear(), db.inspirations.clear(), db.profile.clear()]);
+  await Promise.all(
+    [db.items, db.outfits, db.wearLogs, db.feedback, db.inspirations, db.profile, db.plans, db.trips, db.wishlist].map((t) => t.clear()),
+  );
 }
 
 /** Add the bundled real-photo sample closet (skips pieces already added). Returns how many were added. */
@@ -173,4 +184,27 @@ export async function removeSampleCloset() {
   const ids = (await db.items.toArray()).filter((i) => i.sample).map((i) => i.id);
   await db.items.bulkDelete(ids);
   return ids.length;
+}
+
+/** Move pieces between closet and laundry (records when they went in). */
+export async function setLaundry(ids: string[], inLaundry: boolean) {
+  const at = Date.now();
+  await db.items.where("id").anyOf(ids).modify((i) => {
+    i.status = inLaundry ? "laundry" : "active";
+    i.laundryAt = inLaundry ? at : undefined;
+  });
+}
+
+/** Return laundry that has been out longer than the profile setting. Returns how many came back. */
+export async function returnCleanLaundry(days: number, now = Date.now()): Promise<number> {
+  if (!days) return 0;
+  const cutoff = now - days * 86_400_000;
+  return db.items
+    .where("status")
+    .equals("laundry")
+    .filter((i) => (i.laundryAt ?? 0) <= cutoff)
+    .modify((i) => {
+      i.status = "active";
+      i.laundryAt = undefined;
+    });
 }

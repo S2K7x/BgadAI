@@ -6,6 +6,7 @@
  * so we never send the whole closet to a model or let it invent items.
  */
 import { colorHarmony } from "./colors";
+import { NEUTRALS } from "./taxonomy";
 import { OCCASION_INFO, type Occasion, type Season, type Slot, type Style } from "./taxonomy";
 import type { Feedback, Item, OutfitPiece } from "./types";
 
@@ -23,6 +24,18 @@ export type EngineContext = {
   /** Item ids that must appear in every outfit (e.g. "style this piece"). */
   anchorIds?: string[];
   seed?: number;
+  /** How the user wants to feel today. */
+  mood?: Mood;
+};
+
+export const MOODS = ["cozy", "bold", "polished", "comfy", "fresh"] as const;
+export type Mood = (typeof MOODS)[number];
+export const MOOD_INFO: Record<Mood, { label: string; emoji: string; note: string }> = {
+  cozy: { label: "Cozy", emoji: "🧶", note: "warm knits and soft layers" },
+  bold: { label: "Bold", emoji: "⚡", note: "a pop of colour or pattern" },
+  polished: { label: "Polished", emoji: "✨", note: "a sharper, dressier finish" },
+  comfy: { label: "Comfy", emoji: "☁️", note: "easy, relaxed pieces" },
+  fresh: { label: "Fresh", emoji: "🌿", note: "light, bright colours" },
 };
 
 export type ScoreBreakdown = {
@@ -32,6 +45,7 @@ export type ScoreBreakdown = {
   style: number;
   freshness: number;
   feedback: number;
+  mood?: number;
   total: number;
   notes: string[];
 };
@@ -171,7 +185,7 @@ export function scoreOutfit(items: EngineItem[], ctx: EngineContext): ScoreBreak
     fb = clamp(0.5 + sum * 0.25);
   }
 
-  const total =
+  let total =
     color * WEIGHTS.color +
     formality * WEIGHTS.formality +
     weather * WEIGHTS.weather +
@@ -179,7 +193,13 @@ export function scoreOutfit(items: EngineItem[], ctx: EngineContext): ScoreBreak
     freshness * WEIGHTS.freshness +
     fb * WEIGHTS.feedback;
 
-  return { color, formality, weather, style, freshness, feedback: fb, total, notes };
+  let mood: number | undefined;
+  if (ctx.mood) {
+    mood = moodScore(clothing.length ? clothing : items, ctx.mood);
+    total = (total + mood * MOOD_WEIGHT) / (1 + MOOD_WEIGHT);
+  }
+
+  return { color, formality, weather, style, freshness, feedback: fb, mood, total, notes };
 }
 
 /** Human-readable reasoning for an outfit, built from the score components. */
@@ -194,6 +214,7 @@ export function explain(items: EngineItem[], score: ScoreBreakdown, ctx: EngineC
   const occ = OCCASION_INFO[ctx.occasion].label.toLowerCase();
   if (score.formality >= 0.85) parts.push(`right level of polish for ${occ}`);
   if (score.style >= 0.85) parts.push("very on-brand for your style");
+  if (ctx.mood && (score.mood ?? 0) >= 0.7) parts.push(`${MOOD_INFO[ctx.mood].note} for your ${MOOD_INFO[ctx.mood].label.toLowerCase()} mood`);
   const neverWorn = items.find((i) => i.wearCount === 0 && i.category !== "accessory");
   if (neverWorn) parts.push(`gives your ${neverWorn.name.toLowerCase()} its first outing`);
   const text = parts.filter(Boolean).join("; ");
@@ -366,6 +387,102 @@ export function swapOptions(outfit: EngineItem[], replaceId: string, allItems: E
     .sort((a, b) => b.score - a.score)
     .slice(0, n);
 }
+
+const MOOD_WEIGHT = 0.25;
+const KNITS = new Set(["sweater", "hoodie", "sweatshirt", "cardigan", "long-sleeve", "scarf", "boots"]);
+const RELAXED = new Set(["joggers", "leggings", "hoodie", "sweatshirt", "t-shirt", "sneakers", "sandals", "shorts"]);
+const LIGHT = new Set(["white", "cream", "beige", "light-blue", "pink", "yellow", "khaki"]);
+
+/** 0…1: how well an outfit matches a mood. */
+export function moodScore(items: EngineItem[], mood: Mood): number {
+  if (!items.length) return 0.5;
+  const f = avg(items.map((i) => i.formality));
+  switch (mood) {
+    case "cozy":
+      return clamp(avg(items.map((i) => (KNITS.has(i.subcategory) ? 1 : i.warmth >= 4 ? 0.8 : i.warmth >= 3 ? 0.5 : 0.15))) + 0.1);
+    case "bold": {
+      const accents = items.some((i) => i.colors.some((c) => !NEUTRAL_SET.has(c)));
+      const pattern = items.some((i) => i.pattern !== "solid" && i.pattern !== "texture");
+      const edgy = items.some((i) => i.styles.some((s) => s === "edgy" || s === "streetwear"));
+      return clamp((accents ? 0.55 : 0.15) + (pattern ? 0.25 : 0) + (edgy ? 0.2 : 0));
+    }
+    case "polished":
+      return clamp((f - 1.5) / 2.5);
+    case "comfy":
+      return clamp(1 - (f - 1) / 3.2 + (items.some((i) => RELAXED.has(i.subcategory)) ? 0.15 : 0) - 0.1);
+    case "fresh":
+      return clamp(avg(items.map((i) => (LIGHT.has(i.colors[0]) ? 1 : 0.2))) + 0.05);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* "Before you buy" — how many good outfits would a piece unlock?       */
+/* ------------------------------------------------------------------ */
+
+const PROBE_CONTEXTS: EngineContext[] = [
+  { occasion: "casual", tempC: 18 },
+  { occasion: "casual", tempC: 8 },
+  { occasion: "work", tempC: 16 },
+  { occasion: "date", tempC: 20 },
+];
+
+/** Distinct good outfits (score ≥ threshold) that include `piece`, across typical days. */
+export function outfitsUnlocked(piece: EngineItem, closet: EngineItem[], threshold = 0.68): { count: number; examples: EngineItem[][] } {
+  const pool = [...closet.filter((i) => i.id !== piece.id && i.status === "active"), { ...piece, status: "active" as const }];
+  const seen = new Map<string, EngineItem[]>();
+  for (const [k, base] of PROBE_CONTEXTS.entries()) {
+    const ctx: EngineContext = { ...base, anchorIds: [piece.id], seed: 101 + k };
+    const { candidates } = generateOutfits(pool, ctx, 12);
+    for (const c of candidates) {
+      if (c.score.total < threshold) continue;
+      const key = c.items.filter((i) => i.category !== "bag" && i.category !== "accessory").map((i) => i.id).sort().join("|");
+      if (!seen.has(key)) seen.set(key, c.items);
+    }
+  }
+  return { count: seen.size, examples: [...seen.values()].slice(0, 3) };
+}
+
+/* ------------------------------------------------------------------ */
+/* Trip planner — fewest pieces that cover every day                   */
+/* ------------------------------------------------------------------ */
+
+export type TripDayInput = { date: string; occasion: Occasion; tempC?: number; precipProb?: number };
+export type TripDayPlan = TripDayInput & { itemIds: string[]; score: number };
+
+export function planTrip(closet: EngineItem[], days: TripDayInput[], base: Omit<EngineContext, "occasion">) {
+  const suitcase = new Set<string>();
+  const plans: TripDayPlan[] = [];
+  let prevKey = "";
+  const usedKeys = new Set<string>();
+  days.forEach((d, idx) => {
+    const ctx: EngineContext = { ...base, occasion: d.occasion, tempC: d.tempC, precipProb: d.precipProb, seed: 500 + idx };
+    const { candidates } = generateOutfits(closet, ctx, 10);
+    let best: Candidate | undefined;
+    let bestVal = -Infinity;
+    for (const c of candidates) {
+      const core = c.items.filter((i) => i.category !== "bag" && i.category !== "accessory");
+      const reuse = core.filter((i) => suitcase.has(i.id)).length / Math.max(core.length, 1);
+      const key = core.map((i) => i.id).sort().join("|");
+      // Re-wearing packed pieces keeps the suitcase small; never repeat yesterday's exact look.
+      const val = c.score.total + reuse * 0.1 - (key === prevKey ? 0.5 : usedKeys.has(key) ? 0.2 : 0);
+      if (val > bestVal) {
+        bestVal = val;
+        best = c;
+      }
+    }
+    if (!best) {
+      plans.push({ ...d, itemIds: [], score: 0 });
+      return;
+    }
+    best.items.forEach((i) => suitcase.add(i.id));
+    prevKey = best.items.filter((i) => i.category !== "bag" && i.category !== "accessory").map((i) => i.id).sort().join("|");
+    usedKeys.add(prevKey);
+    plans.push({ ...d, itemIds: best.items.map((i) => i.id), score: best.score.total });
+  });
+  return { days: plans, packing: [...suitcase] };
+}
+
+const NEUTRAL_SET: ReadonlySet<string> = NEUTRALS;
 
 function avg(xs: number[]) {
   return xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0.5;
