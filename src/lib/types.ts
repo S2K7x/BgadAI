@@ -97,3 +97,31 @@ export type Weather = {
   summary: string;
   emoji: string;
 };
+
+/** An outfit planned for a calendar day (id = YYYY-MM-DD). */
+export type DayPlan = {
+  id: string;
+  itemIds: string[];
+  occasion?: import("./taxonomy").Occasion;
+  outfitId?: string;
+};
+
+export type Trip = {
+  id: string;
+  createdAt: number;
+  city: { name: string; latitude: number; longitude: number; country?: string };
+  start: string; // YYYY-MM-DD
+  nights: number;
+  days: { date: string; occasion: import("./taxonomy").Occasion; tempC?: number; precipProb?: number; itemIds: string[] }[];
+  packing: string[];
+  packed: string[];
+};
+
+/** A piece you're thinking of buying, checked against your closet. */
+export type WishItem = ItemTags & {
+  id: string;
+  createdAt: number;
+  thumb?: Blob;
+  src?: string;
+  unlocks: number;
+};

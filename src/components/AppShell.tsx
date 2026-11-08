@@ -10,6 +10,7 @@ const NAV = [
   { href: "/", label: "Today", icon: SunIcon },
   { href: "/closet", label: "Closet", icon: HangerIcon },
   { href: "/create", label: "Create", icon: PlusIcon },
+  { href: "/plan", label: "Plan", icon: CalendarIcon },
   { href: "/inspo", label: "Inspo", icon: SparkIcon },
   { href: "/me", label: "Me", icon: UserIcon },
 ];
@@ -44,7 +45,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main className={`flex-1 px-4 pt-3 ${onboarding ? "pb-8" : "pb-28"}`}>{children}</main>
       {!onboarding && (
         <nav aria-label="Main" className="nav-surface fixed inset-x-0 bottom-0 z-30 border-t border-line pb-[env(safe-area-inset-bottom)]">
-          <ul className="mx-auto grid max-w-md grid-cols-5">
+          <ul className="mx-auto grid max-w-md grid-cols-6">
             {NAV.map(({ href, label, icon: Icon }) => {
               const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
               return (
@@ -107,6 +108,14 @@ function PlusIcon({ active }: IconProps) {
     <svg {...svg} aria-hidden>
       <rect x="3" y="3" width="18" height="18" rx="6" fill={active ? "currentColor" : "none"} />
       <path d="M12 8v8M8 12h8" stroke={active ? "var(--card)" : "currentColor"} />
+    </svg>
+  );
+}
+function CalendarIcon({ active }: IconProps) {
+  return (
+    <svg {...svg} aria-hidden>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2" fill={active ? "currentColor" : "none"} />
+      <path d="M3.5 10h17M8 3v4M16 3v4" stroke={active ? "var(--card)" : "currentColor"} />
     </svg>
   );
 }

@@ -315,3 +315,33 @@ photos stay on the device. The data model in §4.2 maps 1:1 onto the IndexedDB t
 4. Affiliate product feeds for shop-the-gap; budget/size filters.
 5. Outfit calendar view, capsule & packing lists, AI stylist chat.
 6. Offline service worker; virtual try-on (paid credits).
+
+---
+
+## 11. Feature round 2 (built) — what the research pointed to
+
+| Feature | Seen in | Why it matters |
+|---|---|---|
+| Week planner with per-day forecast | GetWardrobe, Whering; recurring request in user threads | Users want weather-aware planning ahead, not just "today" |
+| Trip planner + packing list (fewest pieces → every day covered) | GetWardrobe, ALAMODA, AI Dresser, WardrobeX | High-intent moment; shows the closet's real value |
+| Mood-based outfits | Outfitter AI, Stylegenai | Matches how people actually decide ("I want to feel cozy") |
+| "Before you buy" check + duplicate warning | Klozu, Apprel, Clovio, Stylin extension | Fewer impulse buys and returns; core sustainability promise |
+| Smart buys / wardrobe-gap shopping | BeSpoke, Alta, Styliner | Monetisable (affiliate) and genuinely useful |
+| Streaks, weekly challenges, badges, #30wears | Combyne (gamification), 30 Wears, WearaWay | Habit loop: logging is what makes stats and recommendations good |
+| "Style Wrapped" year recap (shareable) | No wardrobe app found doing this | Differentiator + organic sharing |
+| Declutter suggestions (style / sell / archive) | COSH!, Future Reference, Save Your Wardrobe | Turns usage data into decisions |
+| Outfit share card + "A or B?" poll image | Clueless Style, Hang In There, Mirror, Dapprly | Social proof without needing accounts or a backend |
+
+Not built yet (good next candidates): selfie **seasonal colour analysis** (Palette, HueCheck — note a
+selfie is personal data), real **friend voting** links (needs a backend), **AI stylist chat**
+(Acloset), calendar sync, and resale-value estimates.
+
+Sources: [GetWardrobe compare](https://getwardrobe.com/compare/) · [Whering best apps](https://whering.co.uk/best-wardrobe-apps-2025) ·
+[Outfitter AI](https://apps.apple.com/us/app/outfitter-ai-outfit-maker/id6744943305) · [ALAMODA](https://mwm.ai/apps/alamoda/6756325609) ·
+[AI Dresser](https://apps.apple.com/us/app/-/id6758455229) · [BeSpoke](https://apps.apple.com/us/app/-/id6747891768) ·
+[Klozu](https://mwm.ai/apps/klozu/6762006455) · [Apprel](https://apps.apple.com/mx/app/apprel/id6742572719) ·
+[Stylin](https://extscope.org/extension/jpgmlajfcmmkibakdmggblkallppbiee) · [30 Wears (just-style)](https://www.just-style.com/?p=185749) ·
+[WearaWay](https://apps.apple.com/ba/app/wearaway/id1563392764) · [Good Web Guide on gamification](https://www.thegoodwebguide.co.uk/article/life/popular-apps-to-help-you-organise-your-wardrobe/25431) ·
+[COSH!](https://cosh.eco/hr/cosh-digital-wardrobe-2-2) · [Future Reference cleanout guide](https://futurereference.substack.com/p/closet-cleanout-guide) ·
+[Clueless Style](https://apps.apple.com/us/app/id6758859734) · [Hang In There](https://apps.appfollow.io/ios/hang-in-there/1353390555?country=us) ·
+[Combyne](https://apps.apple.com/sa/app/id989727742) · [Palette colour analysis](https://apps.apple.com/us/app/-/id6483686620)

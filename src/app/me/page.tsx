@@ -6,6 +6,7 @@ import { useMemo, useRef, useState } from "react";
 import { ItemImage } from "@/components/ItemImage";
 import { Button, Card, Chip, ColorPicker, PageHeader, Spinner, Stats } from "@/components/ui";
 import { useTheme, type ThemePref } from "@/hooks/theme";
+import { Declutter, Habits, WrappedCard } from "@/components/Progress";
 import { useAiStatus, useItems, useProfile } from "@/hooks/data";
 import { db, exportAll, importAll, removeSampleCloset, saveProfile, wipeAll } from "@/lib/db";
 import { SampleClosetButton } from "@/components/SampleClosetButton";
@@ -35,6 +36,10 @@ export default function MePage() {
         ]}
       />
 
+      <Habits />
+
+      <WrappedCard />
+
       <section className="relative overflow-hidden rounded-card bg-ink p-5 text-bg dark:border dark:border-line dark:bg-card dark:text-ink">
         <p className="label opacity-60">Your style mix</p>
         <p className="display mt-2 text-[30px]">{styles[0] ? STYLE_INFO[styles[0].style].label : "Not set yet"}</p>
@@ -61,6 +66,8 @@ export default function MePage() {
       </section>
 
       <Insights />
+
+      <Declutter />
 
       <Card className="space-y-5">
         <h2 className="display text-[20px]">Preferences</h2>

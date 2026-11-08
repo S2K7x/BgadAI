@@ -16,6 +16,15 @@ A mobile-first web app (installable PWA) that builds outfits from **your own clo
 - 🖼️ **Inspiration** — upload a look you love: it's broken down into pieces, matched against
   your closet ("2/3 pieces found"), and missing pieces get **shop-similar** results and links
   (Google Shopping, Vinted second-hand, Pinterest).
+- 📅 **Plan** — plan outfits for the week with each day's forecast; **trips** build the smallest
+  suitcase that covers every day, with a day-by-day plan and a packing checklist.
+- 🎭 **Mood dressing** — Cozy, Bold, Polished, Comfy or Fresh re-rank today's outfits.
+- 🛍️ **Before you buy** — "this piece unlocks 34 outfits" or "you already own something similar";
+  **Smart buys** finds the pieces that would add the most outfits to your closet; wishlist.
+- 🔥 **Habits** — logging streak, weekly challenges (rediscover forgotten pieces, variety),
+  #30wears progress, badges, and a shareable **Style Wrapped** year recap.
+- ♻️ **Declutter** — pieces idle for 3+ months with Style it / Sell / Archive.
+- 📤 **Share** — outfit cards and an "A or B?" poll image for friends, via the native share sheet.
 - 📊 **Me** — style profile, wear stats, cost-per-wear, never-worn list, colour palette,
   preferences, and JSON backup/restore.
 - 🔒 **Local-first** — your closet lives in the browser (IndexedDB). Photos are sent to the AI only

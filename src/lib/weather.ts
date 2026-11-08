@@ -51,3 +51,35 @@ export async function fetchWeather(latitude: number, longitude: number): Promise
     ...describeCode(code),
   };
 }
+
+export type DayForecast = { date: string; tempMaxC: number; tempMinC: number; precipProb: number };
+
+/** Daily forecast for a date range (Open-Meteo covers today … +15 days). Missing days are omitted. */
+export async function fetchForecastRange(latitude: number, longitude: number, start: string, end: string): Promise<DayForecast[]> {
+  const params = new URLSearchParams({
+    latitude: String(latitude),
+    longitude: String(longitude),
+    daily: "temperature_2m_max,temperature_2m_min,precipitation_probability_max",
+    timezone: "auto",
+    forecast_days: "16",
+  });
+  const res = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
+  if (!res.ok) throw new Error(`Forecast failed (${res.status})`);
+  const d = await res.json();
+  const out: DayForecast[] = [];
+  (d.daily?.time ?? []).forEach((date: string, i: number) => {
+    if (date < start || date > end) return;
+    out.push({
+      date,
+      tempMaxC: d.daily.temperature_2m_max[i],
+      tempMinC: d.daily.temperature_2m_min[i],
+      precipProb: d.daily.precipitation_probability_max?.[i] ?? 0,
+    });
+  });
+  return out;
+}
+
+/** Daytime "feels like" estimate from a daily forecast. */
+export function dayTemp(f: Pick<DayForecast, "tempMaxC" | "tempMinC">) {
+  return f.tempMaxC * 0.65 + f.tempMinC * 0.35;
+}
