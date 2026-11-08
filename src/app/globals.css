@@ -338,7 +338,7 @@ body {
 }
 /* Fit the wordmark to the container width whatever its length. */
 .hero-word-size {
-  font-size: min(150px, calc(100cqw / (var(--chars) * var(--char-w))));
+  font-size: min(230px, calc(100cqw / (var(--chars) * var(--char-w))));
 }
 /* Editorial: word on top (difference-blends over photos). Synth: word behind the garment. */
 .hero-word-layer {
@@ -370,5 +370,45 @@ body {
   :root:not([data-theme="light"]) .product-photo,
   :root:not([data-theme="light"]) .tile img {
     mix-blend-mode: normal;
+  }
+}
+
+/* ---------- Interaction polish ---------- */
+button:not(:disabled),
+[role="button"],
+select,
+summary,
+label:has(input[type="checkbox"]) {
+  cursor: pointer;
+}
+:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+::selection {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* Sheets slide up on phones and fade/scale in as a modal on desktop. */
+@keyframes sheet-up {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes sheet-pop {
+  from { transform: scale(0.97); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.sheet[open] {
+  animation: sheet-up 0.25s ease-out;
+}
+@media (min-width: 1024px) {
+  .sheet[open] {
+    animation: sheet-pop 0.2s ease-out;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sheet[open] {
+    animation: none;
   }
 }

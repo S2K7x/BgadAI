@@ -27,10 +27,10 @@ export function Hero({
   const v = visuals.slice(0, 2);
   const tilts = v.length === 2 ? ["-7deg", "6deg"] : ["-4deg"];
   return (
-    <section className="hero relative -mx-4 overflow-hidden px-4 pt-2 pb-4">
+    <section className="hero relative -mx-4 overflow-hidden px-4 pt-2 pb-4 md:-mx-8 md:px-8">
       <Asterisk className="absolute top-[178px] left-1 z-[4] h-10 w-10 text-ink" />
 
-      <div className="relative h-[270px]">
+      <div className="relative h-[270px] md:h-[380px] lg:h-[430px]">
         {/* Wordmark */}
         <div className="hero-word-layer pointer-events-none absolute inset-x-0 top-6 select-none">
           <p
@@ -50,10 +50,10 @@ export function Hero({
               style={{ ["--r" as string]: tilts[i], animationDelay: `${i * -2.5}s` }}
             >
               {vis.kind === "photo" ? (
-                <ItemImage blob={vis.blob} alt={vis.alt} className="h-[200px] w-[150px] dark:bg-transparent" />
+                <ItemImage blob={vis.blob} alt={vis.alt} className="h-[200px] w-[150px] md:h-[280px] md:w-[210px] lg:h-[320px] lg:w-[240px] dark:bg-transparent" />
               ) : (
-                <div className="cutout-bg tile grid h-[190px] w-[150px] place-items-center dark:bg-transparent">
-                  <PieceImage eager sub={vis.sub} color={vis.color} className="h-[180px] w-[135px]" />
+                <div className="cutout-bg tile grid h-[190px] w-[150px] place-items-center md:h-[270px] md:w-[210px] lg:h-[310px] lg:w-[240px] dark:bg-transparent">
+                  <PieceImage eager sub={vis.sub} color={vis.color} className="h-[180px] w-[135px] md:h-[255px] md:w-[190px] lg:h-[295px] lg:w-[220px]" />
                 </div>
               )}
             </div>
@@ -62,7 +62,7 @@ export function Hero({
 
         {/* Accent line across the visual */}
         {accent && (
-          <p className="accent-line absolute inset-x-0 bottom-3 z-[3] text-center text-[26px] leading-none drop-shadow-sm">
+          <p className="accent-line absolute inset-x-0 bottom-3 z-[3] text-center text-[26px] leading-none drop-shadow-sm md:text-[38px]">
             {accent}
           </p>
         )}

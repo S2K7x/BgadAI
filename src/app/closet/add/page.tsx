@@ -220,7 +220,7 @@ function AddItems() {
           <h2 className="mb-3 text-sm font-semibold">
             {ready.length} ready{processing && " · processing…"}
           </h2>
-          <ul className="grid grid-cols-2 gap-3">
+          <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
             {drafts.map((d) => (
               <li key={d.key} className="pop-in overflow-hidden rounded-card border border-line bg-card">
                 <div className="relative aspect-square">

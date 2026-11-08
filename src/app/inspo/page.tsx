@@ -294,7 +294,7 @@ function ShopPanel({ garment, wardrobe, shopping }: { garment: DetectedGarment; 
       )}
       {err && <p className="text-sm text-bad">{err}</p>}
       {results && (
-        <ul className="grid grid-cols-2 gap-3">
+        <ul className="grid grid-cols-2 gap-3 md:grid-cols-3">
           {results.map((r) => (
             <li key={r.link}>
               <a href={r.link} target="_blank" rel="noopener noreferrer" className="block">

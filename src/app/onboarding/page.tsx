@@ -59,8 +59,8 @@ export default function Onboarding() {
             word="BgadAI"
             accent="Created for you."
             visuals={[
-              { kind: "garment", sub: "coat", color: "camel" },
-              { kind: "garment", sub: "trousers", color: "navy" },
+              { kind: "garment", sub: "blazer", color: "black" },
+              { kind: "garment", sub: "dress", color: "black" },
             ]}
             left={
               <>

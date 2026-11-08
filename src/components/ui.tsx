@@ -17,11 +17,11 @@ export function PageHeader({
   return (
     <header className="relative mb-6">
       <div className="flex items-start justify-between gap-3">
-        <h1 className="display text-[44px]">{title}</h1>
+        <h1 className="display text-[44px] md:text-[64px] lg:text-[76px]">{title}</h1>
         {action && <div className="pt-1">{action}</div>}
       </div>
-      {accent && <p className="accent-line accent-lg mt-1">{accent}</p>}
-      {subtitle && <p className="mt-2 max-w-[30ch] text-[13px] leading-snug text-muted">{subtitle}</p>}
+      {accent && <p className="accent-line accent-lg mt-1 md:text-[calc(var(--accent-lg)*1.3)]">{accent}</p>}
+      {subtitle && <p className="mt-2 max-w-[38ch] text-[14px] leading-snug text-muted md:text-[15px]">{subtitle}</p>}
     </header>
   );
 }
@@ -30,7 +30,7 @@ export function PageHeader({
 export function SectionTitle({ children, accent, className = "" }: { children: React.ReactNode; accent?: string; className?: string }) {
   return (
     <div className={`text-center ${className}`}>
-      <h2 className="display text-[26px]">{children}</h2>
+      <h2 className="display text-[26px] md:text-[34px]">{children}</h2>
       {accent && <p className="accent-line accent-sm mt-1">{accent}</p>}
     </div>
   );
@@ -40,8 +40,8 @@ type BtnProps = React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "pri
 
 export function Button({ variant = "primary", size = "md", className = "", ...props }: BtnProps) {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded-btn font-semibold uppercase tracking-[0.08em] transition active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text";
-  const sizes = { sm: "h-9 px-3.5 text-[11px]", md: "h-12 px-5 text-[12.5px]" };
+    "inline-flex items-center justify-center gap-2 rounded-btn font-semibold uppercase tracking-[0.08em] transition duration-200 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text";
+  const sizes = { sm: "h-10 px-4 text-[11px]", md: "h-12 px-5 text-[12.5px]" };
   const variants = {
     primary: "bg-accent text-accent-ink hover:opacity-90",
     secondary: "border border-edge bg-transparent text-ink hover:bg-soft",
@@ -68,7 +68,7 @@ export function Chip({
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`inline-flex h-8 shrink-0 items-center gap-1.5 rounded-btn border px-3 text-[10.5px] font-semibold tracking-[0.1em] uppercase transition ${
+      className={`inline-flex h-9 shrink-0 items-center gap-1.5 rounded-btn border px-3.5 text-[10.5px] font-semibold tracking-[0.1em] uppercase transition duration-200 ${
         selected ? "border-accent bg-accent text-accent-ink" : "border-edge text-ink hover:bg-soft"
       } ${className}`}
     >
@@ -166,7 +166,7 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
       ref={ref}
       onClose={onClose}
       onClick={(e) => e.target === ref.current && onClose()}
-      className="m-0 mt-auto max-h-[88dvh] w-full max-w-none overflow-y-auto rounded-t-card border-t border-edge bg-card p-0 text-ink backdrop:bg-black/50 sm:mx-auto sm:max-w-md"
+      className="sheet m-0 mt-auto max-h-[88dvh] w-full max-w-none overflow-y-auto rounded-t-card border-t border-edge bg-card p-0 text-ink backdrop:bg-black/50 sm:mx-auto sm:max-w-lg lg:m-auto lg:max-h-[85dvh] lg:max-w-xl lg:rounded-card lg:border"
     >
       <div className="sticky top-0 z-10 flex items-center justify-between gap-3 bg-card px-5 pt-4 pb-3">
         <h2 className="display truncate text-[22px]">{title}</h2>

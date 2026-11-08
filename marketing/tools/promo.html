@@ -1,0 +1,287 @@
+<!doctype html>
+<!--
+  BgadAI promo renderer. Deterministic timeline: window.renderAt(seconds) lays out every element,
+  so render.mjs can step frame by frame and pipe crisp frames into ffmpeg.
+  URL hash: #format=9x16|16x9|post&raw=<dir with app screenshots>&samples=<public/samples dir>&slide=<n>
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,400..900&family=Rock+Salt&family=Inter:wght@400;500;600;700&display=block" />
+<style>
+  :root { --ink: #0b0b0b; --paper: #ffffff; --soft: #efefef; --purple: #a874ff; --night: #0e0d10; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #fff; }
+  #stage { position: relative; overflow: hidden; background: var(--paper); font-family: Inter, system-ui, sans-serif; color: var(--ink); }
+  .scene { position: absolute; inset: 0; visibility: hidden; }
+  .abs { position: absolute; }
+  .wide { font-family: Anybody, sans-serif; font-stretch: 150%; font-weight: 800; text-transform: uppercase; line-height: 0.9; letter-spacing: -0.01em; }
+  .cond { font-family: Anybody, sans-serif; font-stretch: 62%; font-weight: 750; text-transform: uppercase; line-height: 0.9; }
+  .script { font-family: "Rock Salt", cursive; color: var(--purple); }
+  .label { font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; }
+  .phone { position: absolute; background: #111; box-shadow: 0 40px 80px rgb(0 0 0 / 0.22), inset 0 0 0 2px #2a2a2a; }
+  .phone .screen { position: absolute; overflow: hidden; background: #fff; }
+  .phone .screen img { position: absolute; left: 0; top: 0; width: 100%; display: block; }
+  .phone .island { position: absolute; background: #000; border-radius: 999px; }
+  .laptop { position: absolute; }
+  .laptop .lid { position: absolute; background: #1b1b1d; border-radius: 22px; box-shadow: 0 40px 80px rgb(0 0 0 / 0.25); }
+  .laptop .screen { position: absolute; overflow: hidden; background: #fff; border-radius: 6px; }
+  .laptop .screen img { width: 100%; display: block; position: absolute; top: 0; left: 0; }
+  .laptop .base { position: absolute; background: linear-gradient(#d9d9dc, #a9a9ad); border-radius: 0 0 22px 22px; }
+  .tilt-card { position: absolute; background: var(--soft); clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 0 100%); }
+  .tilt-card img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 18px; }
+  .asterisk { position: absolute; }
+  .chip { display: inline-block; border: 2px solid var(--ink); padding: 10px 18px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+const P = Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
+const FORMAT = P.format || "9x16";
+const [W, H] = FORMAT === "16x9" ? [1920, 1080] : FORMAT === "post" ? [1080, 1350] : [1080, 1920];
+const RAW = P.raw, SAMPLES = P.samples;
+const stage = document.getElementById("stage");
+stage.style.width = W + "px";
+stage.style.height = H + "px";
+const raw = (n) => `file://${RAW}/${n}.png`;
+const sample = (k) => `file://${SAMPLES}/${k}.webp`;
+const PORTRAIT = FORMAT !== "16x9";
+
+// ---------- helpers ----------
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = (x) => { x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const easeOut = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const prog = (t, a, d) => clamp((t - a) / d);
+const el = (tag, cls, parent, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; parent.appendChild(e); return e; };
+const css = (e, o) => { for (const k in o) e.style[k] = typeof o[k] === "number" && !["opacity", "zIndex", "fontWeight", "lineHeight"].includes(k) ? o[k] + "px" : o[k]; };
+const imgReady = [];
+function img(parent, src, cls) { const i = el("img", cls, parent); i.src = src; imgReady.push(i.decode().catch(() => {})); return i; }
+
+function asterisk(parent, size, color = "var(--ink)") {
+  const s = el("div", "asterisk", parent);
+  s.innerHTML = `<svg viewBox="0 0 100 100" width="${size}" height="${size}"><g fill="${color}">${[0, 45, 90, 135].map((r) => `<rect x="41" y="0" width="18" height="100" rx="2" transform="rotate(${r} 50 50)"/>`).join("")}</g></svg>`;
+  return s;
+}
+
+/** Phone mockup: width w, screen shows `src` (a 390px-wide app screenshot at 2x). */
+function phone(parent, src, w, dark = false, navFrom) {
+  const h = w * 2.06;
+  const p = el("div", "phone", parent);
+  const bez = w * 0.035;
+  css(p, { width: w, height: h, borderRadius: w * 0.16 });
+  const screenH = h - 2 * bez, screenW = w - 2 * bez;
+  const sc = el("div", "screen", p);
+  css(sc, { left: bez, top: bez, width: w - 2 * bez, height: h - 2 * bez, borderRadius: w * 0.13, background: dark ? "#0e0d10" : "#fff" });
+  const im = img(sc, src);
+  if (navFrom) {
+    // Real bottom tab bar, cropped from the viewport screenshot (52px of 844px), pinned over scrolled content.
+    const nav = el("div", "", sc);
+    const nh = (screenW / 390) * 56;
+    css(nav, { position: "absolute", left: 0, bottom: 0, width: screenW, height: nh, overflow: "hidden", zIndex: 2 });
+    const ni = img(nav, navFrom);
+    css(ni, { width: screenW, position: "absolute", left: 0, bottom: 0, top: "auto" });
+  }
+  const island = el("div", "island", p);
+  css(island, { width: w * 0.28, height: w * 0.075, left: (w - w * 0.28) / 2, top: bez + w * 0.03 });
+  return {
+    el: p, w, h, img: im,
+    /** p01: 0 = top, 1 = bottom of a full-page screenshot. */
+    scroll(p01) { const ih = (im.naturalHeight / im.naturalWidth) * screenW; css(im, { top: -Math.max(0, ih - screenH) * ease(p01) }); },
+    swap(src2) { if (!im.src.endsWith(src2.split("/").pop())) im.src = src2; },
+  };
+}
+
+function laptop(parent, src, w) {
+  const l = el("div", "laptop", parent);
+  const sw = w * 0.9, sh = sw * (900 / 1440);
+  const lid = el("div", "lid", l);
+  css(lid, { left: (w - sw) / 2 - 18, top: 0, width: sw + 36, height: sh + 36 });
+  const sc = el("div", "screen", l);
+  css(sc, { left: (w - sw) / 2, top: 18, width: sw, height: sh });
+  const im = img(sc, src);
+  const base = el("div", "base", l);
+  css(base, { left: 0, top: sh + 36, width: w, height: w * 0.035 });
+  css(l, { width: w, height: sh + 36 + w * 0.035 });
+  return { el: l, img: im, swap(s) { if (!im.src.endsWith(s.split("/").pop())) im.src = s; } };
+}
+
+/** Big caption block: kicker label + headline (+ optional sub). */
+function caption(parent, { kicker, title, sub, script, dark }) {
+  const c = el("div", "abs", parent);
+  const color = dark ? "#ecebef" : "var(--ink)";
+  if (kicker) css(el("div", "label", c, kicker), { fontSize: PORTRAIT ? 26 : 24, color: dark ? "#8f8b96" : "#6d6d6d", marginBottom: 22 });
+  const t = el("div", dark ? "cond" : "wide", c, title);
+  css(t, { fontSize: PORTRAIT ? (dark ? 130 : 92) : (dark ? 140 : 100), color });
+  if (script) css(el("div", "script", c, script), { fontSize: PORTRAIT ? 44 : 46, marginTop: 18 });
+  if (sub) css(el("div", "", c, sub), { fontSize: PORTRAIT ? 34 : 32, lineHeight: 1.35, marginTop: 26, color: dark ? "#b7b3bd" : "#4a4a4a", width: PORTRAIT ? 880 : 740 });
+  return c;
+}
+
+// ---------- scenes ----------
+const scenes = [];
+function scene(dur, bg, build) {
+  const root = el("div", "scene", stage);
+  root.style.background = bg;
+  const update = build(root);
+  scenes.push({ dur, root, update });
+}
+
+/** Standard feature scene: caption + phone, phone slides up, optional scroll/swap. */
+function featureScene({ dur, kicker, title, sub, script, shots, scroll = false, dark = false }) {
+  scene(dur, dark ? "var(--night)" : "var(--paper)", (root) => {
+    const cap = caption(root, { kicker, title, sub, script, dark });
+    const pw = PORTRAIT ? 590 : 470;
+    const ph = phone(root, raw(shots[0]), pw, dark, scroll ? raw(shots[0].replace("-full", "")) : undefined);
+    const capX = PORTRAIT ? 90 : 130, capY = PORTRAIT ? 130 : 0;
+    if (!PORTRAIT) css(cap, { width: 820 });
+    const deco = asterisk(root, PORTRAIT ? 90 : 80, dark ? "var(--purple)" : "var(--ink)");
+    return (t) => {
+      const a = easeOut(prog(t, 0.05, 0.6));
+      css(cap, { left: capX, top: PORTRAIT ? capY + (1 - a) * 40 : (H - cap.offsetHeight) / 2 + (1 - a) * 40, opacity: a });
+      const b = easeOut(prog(t, 0.2, 0.8));
+      const px = PORTRAIT ? (W - pw) / 2 : 1200;
+      const py = PORTRAIT ? H - ph.h - 70 + (1 - b) * 300 : (H - ph.h) / 2 + (1 - b) * 200;
+      css(ph.el, { left: px, top: py, transform: `rotate(${(1 - b) * 4 - 1.5}deg)` });
+      if (scroll) ph.scroll(prog(t, 1.1, dur - 1.6));
+      if (shots[1]) ph.swap(raw(t > dur * 0.55 ? shots[1] : shots[0]));
+      css(deco, { left: PORTRAIT ? W - 190 : px - 110, top: PORTRAIT ? py + 90 : py + 60, transform: `rotate(${t * 40}deg)`, opacity: b });
+      const fade = Math.min(prog(t, 0, 0.25), 1 - prog(t, dur - 0.25, 0.25));
+      root.style.opacity = fade;
+    };
+  });
+}
+
+// 0. Hook
+scene(3.0, "var(--ink)", (root) => {
+  const words = ["Nothing", "to", "wear?"].map((w) => { const e = el("div", "wide abs", root, w); css(e, { color: "#fff", fontSize: PORTRAIT ? 150 : 170, width: W, textAlign: "center" }); return e; });
+  const strike = el("div", "abs", root); css(strike, { height: 16, background: "var(--purple)" });
+  return (t) => {
+    words.forEach((w, i) => {
+      const a = easeOut(prog(t, 0.15 + i * 0.32, 0.45));
+      const lh = PORTRAIT ? 170 : 175;
+      css(w, { left: 0, top: H / 2 - lh * 1.5 + i * lh + (1 - a) * 60, opacity: a });
+    });
+    const s = ease(prog(t, 1.75, 0.5));
+    css(strike, { left: W * 0.08, top: H / 2 + (PORTRAIT ? 25 : 25), width: W * 0.84 * s });
+    root.style.opacity = 1 - prog(t, 2.75, 0.25);
+  };
+});
+
+// 1. Brand reveal
+scene(3.4, "var(--paper)", (root) => {
+  const cards = ["blazer-black", "dress-black"].map((k) => { const c = el("div", "tilt-card", root); img(c, sample(k)); return c; });
+  const word = el("div", "wide abs", root, "BgadAI");
+  css(word, { width: W, textAlign: "center", color: "#fff", mixBlendMode: "difference", zIndex: 2, fontSize: PORTRAIT ? 158 : 270 });
+  const tag = el("div", "wide abs", root, "Your closet,<br>styled by AI.");
+  css(tag, { width: W, textAlign: "center", fontSize: PORTRAIT ? 64 : 64 });
+  const ast = asterisk(root, 110);
+  return (t) => {
+    const a = easeOut(prog(t, 0, 0.7));
+    const cw = PORTRAIT ? 380 : 400, ch = cw * 1.3;
+    css(cards[0], { width: cw, height: ch, left: W / 2 - cw + 20, top: (PORTRAIT ? 560 : 170) + (1 - a) * 120 - Math.sin(t * 2) * 8, transform: `rotate(${-7 * a}deg)` });
+    css(cards[1], { width: cw, height: ch, left: W / 2 - 20, top: (PORTRAIT ? 610 : 220) + (1 - a) * 160 + Math.sin(t * 2) * 8, transform: `rotate(${6 * a}deg)` });
+    const b = easeOut(prog(t, 0.35, 0.6));
+    css(word, { top: (PORTRAIT ? 470 : 250) + (1 - b) * 50, opacity: b });
+    const c = easeOut(prog(t, 1.0, 0.6));
+    css(tag, { top: (PORTRAIT ? 1400 : 860) + (1 - c) * 30, opacity: c });
+    css(ast, { left: PORTRAIT ? 90 : 220, top: PORTRAIT ? 1180 : 640, transform: `rotate(${t * 50}deg)`, opacity: c });
+    root.style.opacity = Math.min(prog(t, 0, 0.2), 1 - prog(t, 3.15, 0.25));
+  };
+});
+
+featureScene({ dur: 4.2, kicker: "01 · Closet", title: "Snap your<br>clothes.", sub: "AI tags type, colours, formality and season. Real photos, tidy closet.", shots: ["light-m-closet-full"], scroll: true });
+featureScene({ dur: 3.6, kicker: "02 · Style quiz", title: "Swipe your<br>style.", sub: "Two minutes of yes / no and we know your mix.", shots: ["light-m-swipe"] });
+featureScene({ dur: 4.6, kicker: "03 · Today", title: "Outfits for<br>today.", sub: "Built from your own closet, for the weather, the occasion and your mood.", shots: ["light-m-today-full"], scroll: true });
+featureScene({ dur: 3.8, kicker: "04 · Create", title: "Mix & match.", sub: "Build looks yourself and get a live score — or let AI finish it.", shots: ["light-m-create"] });
+featureScene({ dur: 3.8, kicker: "05 · Trips", title: "Pack light.", sub: "10 pieces, 5 outfits. A plan for every day and a packing list.", shots: ["light-m-trip"] });
+featureScene({ dur: 4.2, kicker: "06 · Before you buy", title: "Buy less.<br>Wear more.", sub: "See how many outfits a piece unlocks before you pay.", shots: ["light-m-buycheck", "light-m-smartbuys"] });
+featureScene({ dur: 3.6, kicker: "07 · Habits", title: "Your style,<br>wrapped.", sub: "Streaks, challenges, #30wears and a year in outfits.", shots: ["light-m-wrapped"] });
+
+// 9. Two themes
+scene(3.8, "var(--paper)", (root) => {
+  const half = el("div", "abs", root); css(half, { background: "var(--night)" });
+  const pw = PORTRAIT ? 470 : 380;
+  const l = phone(root, raw("light-m-today"), pw);
+  const d = phone(root, raw("dark-m-today"), pw, true);
+  const t1 = el("div", "wide abs", root, "Editorial"); css(t1, { fontSize: PORTRAIT ? 58 : 60 });
+  const t2 = el("div", "cond abs", root, "Synth"); css(t2, { fontSize: PORTRAIT ? 110 : 120, color: "#ecebef" });
+  const s2 = el("div", "script abs", root, "after dark."); css(s2, { fontSize: 40 });
+  const k = el("div", "label abs", root, "Two looks · one tap"); css(k, { fontSize: 26, color: "#6d6d6d" });
+  return (t) => {
+    const a = ease(prog(t, 0, 0.8));
+    if (PORTRAIT) {
+      css(half, { left: 0, top: H - H * 0.5 * a, width: W, height: H * 0.5 });
+      css(k, { left: 90, top: 110 });
+      css(t1, { left: 90, top: 170 });
+      css(l.el, { left: 60, top: 300 + (1 - easeOut(prog(t, 0.2, 0.7))) * 200, transform: "rotate(-4deg)", zIndex: 1 });
+      css(d.el, { left: W - pw - 60, top: 860 + (1 - easeOut(prog(t, 0.45, 0.7))) * 200, transform: "rotate(4deg)", zIndex: 2 });
+      css(t2, { left: 90, top: H - 330, opacity: easeOut(prog(t, 0.8, 0.5)) });
+      css(s2, { left: 100, top: H - 200, opacity: easeOut(prog(t, 1.1, 0.5)) });
+    } else {
+      css(half, { left: W - W * 0.5 * a, top: 0, width: W * 0.5, height: H });
+      css(k, { left: 120, top: 120 });
+      css(t1, { left: 120, top: 180 });
+      css(l.el, { left: 480, top: 240 + (1 - easeOut(prog(t, 0.2, 0.7))) * 200, transform: "rotate(-4deg)", zIndex: 1 });
+      css(d.el, { left: 1090, top: 150 + (1 - easeOut(prog(t, 0.45, 0.7))) * 200, transform: "rotate(4deg)", zIndex: 2 });
+      css(t2, { left: 1560, top: 360, opacity: easeOut(prog(t, 0.8, 0.5)) });
+      css(s2, { left: 1565, top: 500, opacity: easeOut(prog(t, 1.1, 0.5)) });
+    }
+    root.style.opacity = Math.min(prog(t, 0, 0.2), 1 - prog(t, 3.55, 0.25));
+  };
+});
+
+// 10. Desktop
+scene(3.8, "var(--paper)", (root) => {
+  const cap = caption(root, { kicker: "Everywhere", title: PORTRAIT ? "Phone<br>& desktop." : "Phone & desktop." });
+  const lw = PORTRAIT ? 980 : 1400;
+  const lap = laptop(root, raw("light-d-closet"), lw);
+  const ph = phone(root, raw("light-m-plan"), PORTRAIT ? 300 : 300);
+  return (t) => {
+    const a = easeOut(prog(t, 0, 0.6));
+    css(cap, { left: PORTRAIT ? 90 : 130, top: (PORTRAIT ? 160 : 90) + (1 - a) * 30, opacity: a });
+    const b = easeOut(prog(t, 0.2, 0.8));
+    css(lap.el, { left: (W - lw) / 2 - (PORTRAIT ? 0 : 120), top: (PORTRAIT ? 720 : 300) + (1 - b) * 150 });
+    lap.swap(raw(t > 2.1 ? "dark-d-plan" : "light-d-closet"));
+    const c = easeOut(prog(t, 0.6, 0.7));
+    css(ph.el, { left: PORTRAIT ? W - 330 : W - 420, top: (PORTRAIT ? 1080 : 380) + (1 - c) * 200, transform: "rotate(5deg)" });
+    root.style.opacity = Math.min(prog(t, 0, 0.2), 1 - prog(t, 3.55, 0.25));
+  };
+});
+
+// 11. End card
+scene(4.2, "var(--ink)", (root) => {
+  const word = el("div", "wide abs", root, "BgadAI"); css(word, { color: "#fff", width: W, textAlign: "center", fontSize: PORTRAIT ? 158 : 230 });
+  const tag = el("div", "script abs", root, "your closet, styled for you."); css(tag, { width: W, textAlign: "center", fontSize: PORTRAIT ? 46 : 50 });
+  const pills = el("div", "abs", root); css(pills, { width: W, textAlign: "center" });
+  pills.innerHTML = ["Free", "Private", "Works offline"].map((x) => `<span class="chip" style="color:#fff;border-color:#fff;margin:0 10px;font-size:${PORTRAIT ? 26 : 24}px">${x}</span>`).join("");
+  const url = el("div", "label abs", root, "github.com/S2K7x/BgadAI"); css(url, { width: W, textAlign: "center", color: "#9a9a9a", fontSize: PORTRAIT ? 28 : 26 });
+  const ast = asterisk(root, 120, "#fff");
+  return (t) => {
+    const a = easeOut(prog(t, 0.1, 0.7));
+    css(word, { top: (PORTRAIT ? 700 : 300) + (1 - a) * 40, opacity: a });
+    const b = easeOut(prog(t, 0.6, 0.6));
+    css(tag, { top: PORTRAIT ? 900 : 540, opacity: b });
+    const c = easeOut(prog(t, 1.0, 0.6));
+    css(pills, { top: (PORTRAIT ? 1060 : 660) + (1 - c) * 20, opacity: c });
+    css(url, { top: PORTRAIT ? 1200 : 790, opacity: easeOut(prog(t, 1.4, 0.6)) });
+    css(ast, { left: W / 2 - 60, top: PORTRAIT ? 480 : 140, transform: `rotate(${t * 45}deg) scale(${a})` });
+    root.style.opacity = prog(t, 0, 0.25);
+  };
+});
+
+const DURATION = scenes.reduce((a, s) => a + s.dur, 0);
+window.DURATION = DURATION;
+window.renderAt = (t) => {
+  let acc = 0;
+  for (const s of scenes) {
+    const active = t >= acc && t < acc + s.dur;
+    s.root.style.visibility = active ? "visible" : "hidden";
+    if (active) s.update(t - acc);
+    acc += s.dur;
+  }
+};
+window.ready = Promise.all([document.fonts.ready, ...imgReady]);
+</script>
+</body>
+</html>

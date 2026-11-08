@@ -143,8 +143,8 @@ function Today() {
   const heroVisuals: HeroVisual[] = heroItems.length
     ? heroItems.map((i) => ({ kind: "photo", blob: i.thumb, alt: i.name }))
     : [
-        { kind: "garment", sub: "coat", color: "camel" },
-        { kind: "garment", sub: "t-shirt", color: "white" },
+        { kind: "garment", sub: "blazer", color: "black" },
+        { kind: "garment", sub: "shirt", color: "white" },
       ];
 
   if (!items || !profile) return <Spinner />;
@@ -265,7 +265,7 @@ function Today() {
           {aiError && <p className="mt-2 text-sm text-bad">{aiError}</p>}
           {wornToday ? <p className="mt-2 text-sm text-good">✓ Today&apos;s outfit is logged.</p> : null}
 
-          <ul className="mt-3 space-y-4">
+          <ul className="mt-3 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {shown.map((c, idx) => (
               <OutfitCard
                 key={c.key + (overrides[c.key]?.join() ?? "")}

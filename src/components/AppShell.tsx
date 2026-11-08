@@ -61,30 +61,73 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     };
   }, [profile, onboarding, router]);
 
+  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
+  const logo = (
+    <Link href="/" aria-label="BgadAI home" className="flex items-center gap-1.5">
+      <span className="only-synth h-4 w-1.5 bg-ink" aria-hidden />
+      <span className="display text-[17px] tracking-[0.08em] [font-stretch:var(--display-stretch)]">BgadAI</span>
+    </Link>
+  );
+  const offlineBadge = offline && <span className="label rounded-btn bg-bad px-2 py-1 text-white">Offline</span>;
+
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col">
-      <header className="flex items-center justify-between px-4 pt-[max(env(safe-area-inset-top),12px)] pb-1">
-        <Link href="/" aria-label="BgadAI home" className="flex items-center gap-1.5">
-          <span className="only-synth h-4 w-1.5 bg-ink" aria-hidden />
-          <span className="display text-[17px] tracking-[0.08em] [font-stretch:var(--display-stretch)]">BgadAI</span>
-        </Link>
-        <div className="flex items-center gap-2">
-          {offline && <span className="label rounded-btn bg-bad px-2 py-1 text-white">Offline</span>}
-          <ThemeToggle />
-        </div>
-      </header>
-      <main className={`flex-1 px-4 pt-3 ${onboarding ? "pb-8" : "pb-28"}`}>{children}</main>
+    <div className="flex min-h-dvh w-full">
+      {/* Desktop: persistent sidebar (≥1024px). Phones/tablets use the bottom tab bar. */}
       {!onboarding && (
-        <nav aria-label="Main" className="nav-surface fixed inset-x-0 bottom-0 z-30 border-t border-line pb-[env(safe-area-inset-bottom)]">
-          <ul className="mx-auto grid max-w-md grid-cols-6">
+        <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-line px-5 py-7 lg:flex">
+          {logo}
+          <p className="label mt-1 text-muted">AI stylist</p>
+          <nav aria-label="Main" className="mt-10 flex-1">
+            <ul className="space-y-1">
+              {NAV.map(({ href, label, icon: Icon }) => {
+                const active = isActive(href);
+                return (
+                  <li key={href}>
+                    <Link
+                      href={href}
+                      aria-current={active ? "page" : undefined}
+                      className={`flex h-11 items-center gap-3 rounded-btn px-3 text-[13px] font-semibold tracking-[0.08em] uppercase transition-colors duration-200 ${
+                        active ? "bg-ink text-bg dark:bg-soft dark:text-accent-text" : "text-muted hover:bg-soft hover:text-ink"
+                      }`}
+                    >
+                      <Icon active={active} />
+                      {label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+          <div className="flex flex-col items-start gap-2">
+            {offlineBadge}
+            <ThemeToggle />
+            <p className="mt-2 text-[11px] leading-snug text-muted">Your closet stays on this device.</p>
+          </div>
+        </aside>
+      )}
+
+      <div className={`mx-auto flex min-h-dvh w-full min-w-0 flex-col ${onboarding ? "max-w-xl" : "max-w-md md:max-w-3xl lg:max-w-5xl"}`}>
+        <header className={`flex items-center justify-between px-4 pt-[max(env(safe-area-inset-top),12px)] pb-1 md:px-8 ${onboarding ? "" : "lg:hidden"}`}>
+          {logo}
+          <div className="flex items-center gap-2">
+            {offlineBadge}
+            <ThemeToggle />
+          </div>
+        </header>
+        <main className={`flex-1 px-4 pt-3 md:px-8 ${onboarding ? "pb-8" : "pb-28 lg:pt-8 lg:pb-16"}`}>{children}</main>
+      </div>
+
+      {!onboarding && (
+        <nav aria-label="Main" className="nav-surface fixed inset-x-0 bottom-0 z-30 border-t border-line pb-[env(safe-area-inset-bottom)] lg:hidden">
+          <ul className="mx-auto grid max-w-xl grid-cols-6">
             {NAV.map(({ href, label, icon: Icon }) => {
-              const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
+              const active = isActive(href);
               return (
                 <li key={href}>
                   <Link
                     href={href}
                     aria-current={active ? "page" : undefined}
-                    className={`relative flex flex-col items-center gap-1 pt-2.5 pb-2 label ${active ? "text-ink dark:text-accent-text" : "text-muted"}`}
+                    className={`relative flex min-h-[52px] flex-col items-center justify-center gap-1 pt-2 pb-1.5 label transition-colors duration-200 ${active ? "text-ink dark:text-accent-text" : "text-muted"}`}
                   >
                     {active && <span className="absolute top-0 h-[2px] w-8 bg-ink dark:bg-accent-text" aria-hidden />}
                     <Icon active={active} />
@@ -108,7 +151,7 @@ function ThemeToggle() {
       type="button"
       onClick={() => setPref(dark ? "light" : "dark")}
       aria-label={dark ? "Switch to Editorial (light) theme" : "Switch to Synth (dark) theme"}
-      className="label flex h-8 items-center gap-1.5 rounded-btn border border-edge px-2.5 text-ink"
+      className="label flex h-9 items-center gap-1.5 rounded-btn border border-edge px-3 text-ink transition-colors duration-200 hover:bg-soft"
     >
       <span aria-hidden>{dark ? "☾" : "☀"}</span>
       {dark ? "Synth" : "Editorial"}
